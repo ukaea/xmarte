@@ -1,0 +1,30 @@
+import os
+from xmarte.qt5.plugins.base_plugin import GUIPlugin, PluginException
+
+class $plugin_name(GUIPlugin):
+    def pluginDescription(self):
+        """
+        This must be implemented and effectively informs the application about what functions it is bringing in and what components.
+        """
+        return {
+            "plugin_name": "$plugin_name",
+            "plugin": self,
+            "plugin_description": "$plugin_name",
+            "documentation": [
+                {
+                    "title": "$plugin_name",
+                    "link": r"",
+                }
+            ],
+            "file_handlers": [],
+            "test_engines": [],
+            "services": [],
+        }
+
+
+def registerPlugin(application):
+    plugin_object = $plugin_name(application)
+    return plugin_object.pluginDescription()
+
+def getPluginClass():
+    return $plugin_name

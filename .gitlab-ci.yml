@@ -1,0 +1,84 @@
+default:
+  tags:
+    - lower-privacy
+    - docker
+    - ubuntu
+    - meta
+
+stages:
+    - docker
+    - quality
+    - test
+    - documentation
+    - deploy
+
+variables:
+   GIT_SUBMODULE_STRATEGY: recursive
+
+docker:
+   stage: docker
+   image: docker:19.03.12
+   services:
+      - docker:19.03.12-dind
+   script:
+      - export IMAGE_NAME=$CI_REGISTRY_IMAGE
+      - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+      - docker build -t $IMAGE_NAME:latest -f test/docker/Dockerfile .
+      - docker push $IMAGE_NAME
+   rules:
+     - if: '$DOCKER == "run"'
+
+docs:
+  stage: documentation
+  image: sudilav1/xmarte:main
+  script:
+    - cd docs
+    - make html
+  tags:
+      - lower-privacy
+      - docker
+      - ubuntu
+      - meta
+  artifacts:
+    paths:
+      - docs/build/html
+    expire_in: 1 week
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+      when: always
+
+pages:
+  stage: deploy
+  script:
+    - mkdir -p public/
+    - rm -rf public/*
+    - cp -a docs/build/html/* public/
+  tags:
+      - lower-privacy
+      - docker
+      - ubuntu
+      - meta
+  artifacts:
+    paths:
+      - public/
+    expire_in: 1 year
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+      when: always
+
+
+lint:
+  stage: quality
+  image: sudilav1/xmarte:main
+  script:
+    - pylint xmarte
+
+test:
+   stage: test
+   image: sudilav1/xmarte:main
+   script:
+       - pytest --cov=xmarte --cov-report=term --cov-report=html:cov_html --cov-fail-under=90
+   artifacts:
+        paths:
+            - cov_html/
+        expire_in: 1 year

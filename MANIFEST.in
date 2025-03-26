@@ -1,0 +1,9 @@
+include *.xmt
+include *.png
+include *.json
+include *.css
+recursive-include xmarte *.xmt
+recursive-include xmarte *.png
+recursive-include xmarte *.json
+recursive-include xmarte *.css
+exclude test/*

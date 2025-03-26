@@ -1,0 +1,609 @@
++WebRoot = {
+    Class = HttpObjectBrowser
+    Root = "."
+    +ObjectBrowse = {
+        Class = HttpObjectBrowser
+        Root = "/"
+    }
+    +ResourcesHtml = {
+        Class = HttpDirectoryResource
+        BaseDir = "../../MARTe2-dev/Resources/HTTP/"
+    }    
+    +HttpMessageInterface = {
+        Class = HttpMessageInterface
+        +GOTOIDLE = {
+            Class = Message
+            Destination = StateMachine
+            Function = GOTOIDLE
+            Mode = ExpectsReply
+        }
+        +GOTORUN = {
+            Class = Message
+            Destination = StateMachine
+            Function = GOTORUN
+            Mode = ExpectsReply
+        }
+        +GOTOERR = {
+            Class = Message
+            Destination = StateMachineError
+            Function = GOTOERR 
+            Mode = ExpectsReply
+        }
+    }
+}
++WebServer = {
+    Class = HttpService
+    Port = 8084
+    WebRoot = WebRoot
+    Timeout = 0
+    ListenMaxConnections = 255
+    AcceptTimeout = 1000
+    MaxNumberOfThreads = 8
+    MinNumberOfThreads = 1
+}
++StateMachine = {
+    Class = StateMachine
+    +INITIAL = {
+        Class = ReferenceContainer      
+        +START = {
+            Class = StateMachineEvent
+            NextState = "IDLE"
+            NextStateError = "IDLE"
+            Timeout = 0
+            +StartHttpServer = {
+                Class = Message
+                Destination = "WebServer"
+                Function = "Start"
+                Mode = ExpectsReply
+            }
+            +ChangeToStateIdleMsg = {
+                Class = Message
+                Destination = TestApp
+                Mode = ExpectsReply
+                Function = PrepareNextState
+                +Parameters = {
+                    Class = ConfigurationDatabase
+                    param1 = Idle
+                }
+            }
+            +StartNextStateExecutionMsg = {
+                Class = Message
+                Destination = TestApp
+                Function = StartNextStateExecution
+                Mode = ExpectsReply
+            }
+        }
+    }
+    +IDLE = {
+        Class = ReferenceContainer
+        +GOTORUN = {
+            Class = StateMachineEvent
+            NextState = "RUN"
+            NextStateError = "IDLE"
+            Timeout = 0 
+            +ChangeToRunMsg = {
+                Class = Message
+                Destination = TestApp
+                Mode = ExpectsReply
+                Function = PrepareNextState
+                +Parameters = {
+                    Class = ConfigurationDatabase
+                    param1 = Run
+                }
+            }
+            +StopCurrentStateExecutionMsg = {
+                Class = Message
+                Destination = TestApp
+                Function = StopCurrentStateExecution
+                Mode = ExpectsReply
+            }
+            +StartNextStateExecutionMsg = {
+                Class = Message
+                Destination = TestApp
+                Function = StartNextStateExecution
+                Mode = ExpectsReply
+            }
+        }
+    }
+    +RUN = {
+        Class = ReferenceContainer
+        +GOTOIDLE = {
+            Class = StateMachineEvent
+            NextState = "IDLE"
+            NextStateError = "IDLE"
+            Timeout = 0         
+            +ChangeToIdleMsg = {
+                Class = Message
+                Destination = TestApp
+                Mode = ExpectsReply
+                Function = PrepareNextState
+                +Parameters = {
+                    Class = ConfigurationDatabase
+                    param1 = Idle
+                }
+            }
+            +StopCurrentStateExecutionMsg = {
+                Class = Message
+                Destination = TestApp
+                Function = StopCurrentStateExecution
+                Mode = ExpectsReply
+            }
+            +StartNextStateExecutionMsg = {
+                Class = Message
+                Destination = TestApp
+                Function = StartNextStateExecution
+                Mode = ExpectsReply
+            }
+        }   
+    }
+}
+$TestApp = {
+    Class = RealTimeApplication
+    +Functions = {
+        Class = ReferenceContainer
+        +GAMADC = {
+            Class = IOGAM
+            InputSignals = {
+                Counter = {
+                    DataSource = NI6259_0_ADC
+                    Type = uint32
+                }
+                Time = {
+                    DataSource = NI6259_0_ADC
+                    Type = uint32
+                }
+                ADC0_0 = {
+                    DataSource = NI6259_0_ADC
+                    Samples = 125
+                    Frequency = 2000
+                }
+                ADC0_1 = {
+                    DataSource = NI6259_0_ADC
+                    Samples = 125
+                }
+                ADC0_2 = {
+                    DataSource = NI6259_0_ADC
+                    Samples = 125
+                }
+                ADC0_3 = {
+                    DataSource = NI6259_0_ADC
+                    Samples = 125
+                }
+            }
+            OutputSignals = {
+                Counter = {
+                    DataSource = DDB1
+                    Type = uint32
+                }
+                Time = {
+                    DataSource = DDB1
+                    Type = uint32                   
+                }
+                ADC0_0 = {
+                    DataSource = DDB1
+                    Type = int16
+                    NumberOfElements = 125
+                    NumberOfDimensions = 1          
+                }  
+                ADC0_1 = {
+                    DataSource = DDB1
+                    Type = int16
+                    NumberOfElements = 125
+                    NumberOfDimensions = 1          
+                }  
+                ADC0_2 = {
+                    DataSource = DDB1
+                    Type = int16
+                    NumberOfElements = 125
+                    NumberOfDimensions = 1          
+                }  
+                ADC0_3 = {
+                    DataSource = DDB1
+                    Type = int16
+                    NumberOfElements = 125
+                    NumberOfDimensions = 1          
+                }  
+            }
+        }
+        +GAMDownsample = {
+            Class = IOGAM
+            InputSignals = {
+                ADC0_0 = {
+                    DataSource = DDB1
+                    Type = int16
+                    NumberOfElements = 125 
+                    Ranges = {{0, 0}}
+                }
+                ADC0_1 = {
+                    DataSource = DDB1
+                    Type = int16
+                    NumberOfElements = 125 
+                    Ranges = {{0, 0}}
+                }
+                ADC0_2 = {
+                    DataSource = DDB1
+                    Type = int16
+                    NumberOfElements = 125 
+                    Ranges = {{0, 0}}
+                }
+                ADC0_3 = {
+                    DataSource = DDB1
+                    Type = int16
+                    NumberOfElements = 125 
+                    Ranges = {{0, 0}}
+                }
+            }
+            OutputSignals = {
+                ADC0_0_0 = {
+                    DataSource = DDB1
+                    Type = int16
+                    NumberOfElements = 1
+                }
+                ADC0_1_0 = {
+                    DataSource = DDB1
+                    Type = int16
+                    NumberOfElements = 1
+                }
+                ADC0_2_0 = {
+                    DataSource = DDB1
+                    Type = int16
+                    NumberOfElements = 1
+                }
+                ADC0_3_0 = {
+                    DataSource = DDB1
+                    Type = int16
+                    NumberOfElements = 1
+                }
+            }
+        }
+        +GAMConvert = {
+            Class = ConversionGAM
+            InputSignals = {
+                ADC0_0_0 = {
+                    DataSource = DDB1
+                    Type = int16
+                }
+                ADC0_1_0 = {
+                    DataSource = DDB1
+                    Type = int16
+                }
+                ADC0_2_0 = {
+                    DataSource = DDB1
+                    Type = int16
+                }
+                ADC0_3_0 = {
+                    DataSource = DDB1
+                    Type = int16
+                }
+            }
+            OutputSignals = {
+                ADC0_0_0_f = {
+                    DataSource = DDB1
+                    Type = float32
+                    NumberOfElements = 1
+                    Gain = 0.000305176
+                }
+                ADC0_1_0_f = {
+                    DataSource = DDB1
+                    Type = float32
+                    NumberOfElements = 1
+                    Gain = 0.000305176
+                }
+                ADC0_2_0_f = {
+                    DataSource = DDB1
+                    Type = float32
+                    NumberOfElements = 1
+                    Gain = 0.000305176
+                }
+                ADC0_3_0_f = {
+                    DataSource = DDB1
+                    Type = float32
+                    NumberOfElements = 1
+                    Gain = 0.000305176
+                }
+            }
+        }
+        +GAMWF1 = {
+            Class = WaveformGAM::WaveformSin
+            Amplitude = 5.0
+            Frequency = 1.0
+            Phase = 0.0
+            Offset = 1.1
+            InputSignals = {
+                Time = {
+                    DataSource = DDB1
+                    Type = uint32 
+                }
+            }
+            OutputSignals = {
+                DACReference = {
+                    DataSource = DDB1
+                    Type = float32
+                }
+            }
+        }
+        +GAMDAC = {
+            Class = IOGAM
+            InputSignals = {
+                DACReference = {
+                    DataSource = DDB1
+                    Type = float32
+                }
+            }
+            OutputSignals = {
+                DACReference = {
+                    DataSource = NI6259_0_DAC
+                    Alias = DAC0_0
+                    Type = float32
+                    Trigger = 1
+                }
+            }
+        }
+        +GAMPerformanceWriter = {
+            Class = IOGAM
+            InputSignals = {
+                Time = {
+                    DataSource = DDB1
+                    Type = uint32
+                }
+                Idle_Thread1_CycleTime = {                  
+                    DataSource = Timings
+                    Alias = "Idle.Thread1_CycleTime"
+                    Type = uint32           
+                }
+                GAMADC_ReadTime = {
+                    DataSource = Timings
+                    Type = uint32           
+                } 
+                GAMADC_ExecTime = {
+                    DataSource = Timings
+                    Type = uint32           
+                }
+                GAMADC_WriteTime = {
+                    DataSource = Timings
+                    Type = uint32           
+                }
+                GAMPerformanceWriter_WriteTime= {
+                    DataSource = Timings
+                    Type = uint32           
+                }
+            }
+            OutputSignals = {
+                Time = {
+                    DataSource = PerformanceWriter
+                    Type = uint32
+                }
+                Idle_Thread1_CycleTime = {                  
+                    DataSource = PerformanceWriter
+                    Type = uint32           
+                }
+                GAMADC_ReadTime = {
+                    DataSource = PerformanceWriter 
+                    Type = uint32           
+                } 
+                GAMADC_ExecTime = {
+                    DataSource = PerformanceWriter
+                    Type = uint32           
+                }
+                GAMADC_WriteTime = {
+                    DataSource = PerformanceWriter
+                    Type = uint32           
+                }
+                GAMPerformanceWriter_WriteTime= {
+                    DataSource = PerformanceWriter
+                    Type = uint32           
+                }
+            }
+        }
+        +GAMSignalsWriter = {
+            Class = IOGAM
+            InputSignals = {
+                Time = {
+                    DataSource = DDB1
+                    Type = uint32
+                }
+                DACReference = {
+                    DataSource = DDB1
+                    Type = float32
+                }
+                ADC0_0_0_f = {
+                    DataSource = DDB1
+                    Type = float32
+                }
+                ADC0_1_0_f = {
+                    DataSource = DDB1
+                    Type = float32
+                }
+                ADC0_2_0_f = {
+                    DataSource = DDB1
+                    Type = float32
+                }
+                ADC0_3_0_f = {
+                    DataSource = DDB1
+                    Type = float32
+                }
+            }
+            OutputSignals = {
+                Time = {
+                    DataSource = SignalsWriter
+                    Type = uint32
+                }
+                DACReference = {
+                    DataSource = SignalsWriter
+                    Type = float32
+                }
+                ADC0_0_0_f = {
+                    DataSource = SignalsWriter
+                    Type = float32
+                }
+                ADC0_1_0_f = {
+                    DataSource = SignalsWriter
+                    Type = float32
+                }
+                ADC0_2_0_f = {
+                    DataSource = SignalsWriter
+                    Type = float32
+                }
+                ADC0_3_0_f = {
+                    DataSource = SignalsWriter
+                    Type = float32
+                }
+            }
+        }
+    }
+    +Data = {
+        Class = ReferenceContainer
+        DefaultDataSource = DDB1
+        +DDB1 = {
+            Class = GAMDataSource
+        }        
+        +LoggerDataSource = {
+            Class = LoggerDataSource
+        }
+        +Timings = {
+            Class = TimingDataSource
+        }
+        +SignalsWriter = {
+            Class = FileDataSource::FileWriter
+            NumberOfBuffers = 10000
+            CPUMask = 1 
+            StackSize = 10000000
+            Filename = "/tmp/RTApp-NI6259-1.csv" 
+            Overwrite = "yes" 
+            FileFormat = "csv"
+            CSVSeparator = "," 
+            StoreOnTrigger = 0 
+            Signals = {
+                Time = { 
+                    Type = "uint32"
+                }
+                DACReference = {
+                    Type = "float32"
+                } 
+                ADC0_0_0_f = {
+                    Type = "float32"
+                }
+                ADC0_1_0_f = {
+                    Type = "float32"
+                }
+                ADC0_2_0_f = {
+                    Type = "float32"
+                }
+                ADC0_3_0_f = {
+                    Type = "float32"
+                }
+            }
+        }
+        +PerformanceWriter = {
+            Class = FileDataSource::FileWriter
+            NumberOfBuffers = 10000
+            CPUMask = 1 
+            StackSize = 10000000
+            Filename = "/tmp/RTApp-NI6259-1-performance.csv" 
+            Overwrite = "yes" 
+            FileFormat = "csv"
+            CSVSeparator = "," 
+            StoreOnTrigger = 0 
+            Signals = {
+                Time = { 
+                    Type = "uint32"
+                }
+                Idle_Thread1_CycleTime = {
+                    Type = "uint32"
+                } 
+                GAMADC_ReadTime = {
+                    Type = "uint32"
+                }
+                GAMADC_ExecTime = {
+                    Type = "uint32"
+                }
+                GAMADC_WriteTime = {
+                    Type = "uint32"
+                }
+                GAMPerformanceWriter_WriteTime = {
+                    Type = "uint32"
+                }
+            }
+        }
+        +NI6259_0_ADC = {
+            Class = NI6259::NI6259ADC
+            SamplingFrequency = 1000000
+            DeviceName = "/dev/pxi6259"
+            BoardId = 0
+            DelayDivisor = 3
+            ClockSampleSource = "SI_TC"
+            ClockSamplePolarity = "ACTIVE_HIGH_OR_RISING_EDGE"
+            ClockConvertSource = "SI2TC"
+            ClockConvertPolarity = "RISING_EDGE"
+            CPUs = 0x2
+            Signals = {
+                Counter = {
+                    Type = uint32
+                }
+                Time = {
+                    Type = uint32
+                }
+                ADC0_0 = {
+                    InputRange = 10
+                    Type = int16
+                    ChannelId = 0
+                    InputPolarity = Bipolar
+                    InputMode = RSE
+                }
+                ADC0_1 = {
+                    InputRange = 10
+                    Type = int16
+                    ChannelId = 1
+                    InputPolarity = Bipolar
+                    InputMode = RSE
+                }
+                ADC0_2 = {
+                    InputRange = 10
+                    Type = int16
+                    ChannelId = 2
+                    InputPolarity = Bipolar
+                    InputMode = RSE
+                }
+                ADC0_3 = {
+                    InputRange = 10
+                    Type = int16
+                    ChannelId = 3
+                    InputPolarity = Bipolar
+                    InputMode = RSE
+                }
+            }
+        }
+        +NI6259_0_DAC = {
+            Class = NI6259::NI6259DAC
+            DeviceName = "/dev/pxi6259"
+            BoardId = 0
+            ClockUpdateSource = "UI_TC"
+            ClockUpdatePolarity = "RISING_EDGE"
+            Signals = {
+                DAC0_0 = {
+                    Type = float32
+                    ChannelId = 0
+                    OutputPolarity = Bipolar                    
+                } 
+            }
+        }
+    }
+    +States = {
+        Class = ReferenceContainer
+        +Idle = {
+            Class = RealTimeState
+            +Threads = {
+                Class = ReferenceContainer
+                +Thread1 = {
+                    Class = RealTimeThread
+                    CPUs = 0x4
+                    Functions = {GAMADC GAMDownsample GAMConvert GAMWF1 GAMDAC GAMSignalsWriter GAMPerformanceWriter }
+                }
+            }
+        }
+    }
+    +Scheduler = {
+        Class = GAMScheduler
+        TimingDataSource = Timings
+    }
+}

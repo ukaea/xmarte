@@ -1,0 +1,6 @@
+[submodule "test/MARTe2-demos-padova"]
+	path = test/MARTe2-demos-padova
+	url = http://vcis-gitlab.f4e.europa.eu/aneto/MARTe2-demos-padova.git
+[submodule "test/marte2_python"]
+	path = test/marte2_python
+	url = https://github.com/ukaea/MARTe2-python.git

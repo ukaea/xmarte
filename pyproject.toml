@@ -1,0 +1,100 @@
+[project]
+name = "xmarte"
+version = "0.1.2"
+description = "A GUI Application for configuration MARTe2 applications."
+readme = "README.md"
+authors = [
+    { name = "Edward Jones", email = "edward.jones1@ukaea.uk" }
+]
+requires-python = ">=3.9"
+dependencies = [
+    "PyQt5>=5.15.2",
+    "PyQt5-Qt5>=5.15.2",
+    "qdarkgraystyle>=1.0.2",
+    "pandas>=2.0.2",
+    "qtpy>=2.4.1",
+    "pyyaml>=6.0.1",
+    "pytest>=8.1.1",
+    "pytest-qt>=4.4.0",
+    "ruff>=0.3.5",
+    "fpdf>=1.7.2",
+    "pyqtchart>=5.15.2",
+    "pyqt-modern-slider>=0.0.5",
+    "matplotlib>=3.8.3",
+    "cryptography>=42.0.8",
+    "pytest-mock>=3.14.0",
+    "scipy>=1.13.1",
+    "nodeeditor",
+    "martepy"
+]
+
+[project.urls]
+"Homepage" = "https://github.com/ukaea/xMARTe"
+
+[tool.setuptools.packages.find]
+# Specify the include pattern to discover specific packages in the root
+include = ["xmarte","xmarte.*"]
+exclude = ["marte2_python","marte2_python.*"]
+
+[tool.setuptools.package-data]
+"my_package" = ["*.xmt", "*.png", "*.json", "*.css", "**/*.xmt", "**/*.png", "**/*.json", "**/*.css"]  # Include .xmt and .png files
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.pylint]
+disable = [
+    "raw-checker-failed",
+    "bad-inline-option",
+    "locally-disabled",
+    "file-ignored",
+    "suppressed-message",
+    "useless-suppression",
+    "deprecated-pragma",
+    "use-symbolic-message-instead",
+    "C0413",
+    "R0902",
+    "W0102",
+    "R0903",
+    "R0913",
+    "W0401",
+    "C0302",
+    "R0917",
+    "duplicate-code"
+]
+extension-pkg-whitelist="PyQt5"
+max-line-length = 100
+ignore = ["CVS","my_first_plugin","docker","build_system","build","test"]
+method-naming-style="camelCase"
+function-naming-style="camelCase"
+variable-naming-style="any"
+class-attribute-naming-style="any"
+argument-naming-style="snake_case"
+attr-naming-style="any"
+
+[tool.coverage.run]
+omit = ["test/*", ".github", "docs/*", "cov_html", "build", ".pytest_cache/*", "xmarte/nodeeditor/*"]
+
+[tool.coverage.report]
+omit = ["test/*", ".github", "docs/*", "cov_html", "build", ".pytest_cache/*", "xmarte/nodeeditor/*", "xmarte/__main__.py"]
+show_missing = true
+precision = 2
+
+[tool.coverage.html]
+directory = "cov_html"
+title = "Coverage Report for xMARTe2"
+
+[tool.pytest.ini_options]
+qt_api = "pyqt5"
+testpaths = ["test"]
+
+addopts = [
+   "--ignore=xmarte",
+   "--ignore=test/marte2_python",
+   "--ignore=test/test_menus/test_deployment_menu.py",
+   "-W", "ignore::DeprecationWarning"
+]
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
