@@ -16,7 +16,7 @@ When you require support please open an issue, if you would like to make adjustm
 
 **Note: You must comply with our guidelines as per the below.**
 
-[Repository Guidelines](https://git.ccfe.ac.uk/marte21/xmarte/-/blob/main/Guidelines.md)
+[Repository Guidelines](https://github.com/ukaea/xmarte/blob/main/Guidelines.md)
 
 ## Installation
 
@@ -36,7 +36,7 @@ python -m xmarte
 
 For further guidance and documentation on using the GUI please refer to:
 
-<a href="https://marte21.gitpages.ccfe.ac.uk/xmarte/">Official Documentation</a>
+<a href="https://ukaea.github.io/xmarte/">Official Documentation</a>
 
 ### Compiling and Simulation
 
@@ -59,7 +59,7 @@ If you wish to run the compiler or simulator remotely, you will need to setup a 
 
 For support on using this application you can refer to the documentation found here:
 
-[User Documentation](https://marte21.gitpages.ccfe.ac.uk/xmarte/)
+[User Documentation](https://ukaea.github.io/xmarte/)
 
 If you have found a bug or have a feature request then please submit an issue within this repository.
 
