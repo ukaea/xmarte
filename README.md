@@ -41,7 +41,7 @@ For further guidance and documentation on using the GUI please refer to:
 ### Compiling and Simulation
 
 To run the compiler or simulator, you can run these locally but need to have installed on Linux docker, on windows you will need to install WSL and then sequently docker on your WSL setup.
-If you wish to run the compiler or simulator remotely, you will need to setup a remote server and then configure the server as mentioned in the <a href="https://marte21.gitpages.ccfe.ac.uk/xmarte/">documentation here</a>.
+If you wish to run the compiler or simulator remotely, you will need to setup a remote server and then configure the server as mentioned in the <a href="https://ukaea.github.io/xmarte/options.html#remote-execution">documentation here</a>.
 
 **Note: By default the system assumes you have selected a local compilation/simulation.**
 
