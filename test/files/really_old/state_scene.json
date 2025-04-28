@@ -1,0 +1,361 @@
+{
+    "id": 140597366151152,
+    "scene_width": 6400,
+    "scene_height": 6400,
+    "nodes": [
+        {
+            "id": 140597366345008,
+            "title": "INITIAL",
+            "pos_x": 3392.0,
+            "pos_y": 3392.0,
+            "inputs": [
+                {
+                    "id": 140597366344000,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 1,
+                    "socket_type": 0,
+                    "label": ""
+                },
+                {
+                    "id": 140597366344096,
+                    "index": 1,
+                    "multi_edges": true,
+                    "position": 1,
+                    "socket_type": 1,
+                    "label": ""
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 140597366342464,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 4,
+                    "socket_type": 0,
+                    "label": "Next State"
+                },
+                {
+                    "id": 140597366342320,
+                    "index": 1,
+                    "multi_edges": true,
+                    "position": 4,
+                    "socket_type": 1,
+                    "label": "Error State   "
+                }
+            ],
+            "content": {}
+        },
+        {
+            "id": 140597366343856,
+            "title": "STATE1",
+            "pos_x": 3612.0,
+            "pos_y": 3392.0,
+            "inputs": [
+                {
+                    "id": 140597366343520,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 1,
+                    "socket_type": 0,
+                    "label": ""
+                },
+                {
+                    "id": 140597366343232,
+                    "index": 1,
+                    "multi_edges": true,
+                    "position": 1,
+                    "socket_type": 1,
+                    "label": ""
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 140597366345104,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 4,
+                    "socket_type": 0,
+                    "label": "Next State"
+                },
+                {
+                    "id": 140597366835424,
+                    "index": 1,
+                    "multi_edges": true,
+                    "position": 4,
+                    "socket_type": 1,
+                    "label": "Error State   "
+                }
+            ],
+            "content": {}
+        },
+        {
+            "id": 140597366344048,
+            "title": "ERROR",
+            "pos_x": 3832.0,
+            "pos_y": 3392.0,
+            "inputs": [
+                {
+                    "id": 140597366833600,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 1,
+                    "socket_type": 0,
+                    "label": ""
+                },
+                {
+                    "id": 140597366833264,
+                    "index": 1,
+                    "multi_edges": true,
+                    "position": 1,
+                    "socket_type": 1,
+                    "label": ""
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 140597366834224,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 4,
+                    "socket_type": 0,
+                    "label": "Next State"
+                },
+                {
+                    "id": 140597366833360,
+                    "index": 1,
+                    "multi_edges": true,
+                    "position": 4,
+                    "socket_type": 1,
+                    "label": "Error State   "
+                }
+            ],
+            "content": {}
+        }
+    ],
+    "edges": [
+        {
+            "id": 140597366833936,
+            "edge_type": 1,
+            "start": 140597366342464,
+            "end": 140597366343520,
+            "state_message": {
+                "configuration_name": "+START",
+                "class_name": "StateMachineEvent",
+                "nextstate": "STATE1",
+                "nextstateerror": "ERROR",
+                "timeout": 0,
+                "messages": [
+                    {
+                        "configuration_name": "+PrepareChangeToState1Msg",
+                        "class_name": "Message",
+                        "destination": "App",
+                        "maxwait": 0,
+                        "function": "PrepareNextState",
+                        "parameters": [
+                            {
+                                "configuration_name": "+Parameters",
+                                "parameters": [
+                                    {
+                                        "name": "param1",
+                                        "value": "State1"
+                                    }
+                                ],
+                                "class_name": "Parameters"
+                            }
+                        ],
+                        "mode": "ExpectsReply"
+                    },
+                    {
+                        "configuration_name": "+StartNextStateExecutionMsg",
+                        "class_name": "Message",
+                        "destination": "App",
+                        "maxwait": 0,
+                        "function": "StartNextStateExecution",
+                        "parameters": [],
+                        "mode": "ExpectsReply"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 140597366835760,
+            "edge_type": 1,
+            "start": 140597366342320,
+            "end": 140597366833264,
+            "state_message": {
+                "configuration_name": "+START",
+                "class_name": "StateMachineEvent",
+                "nextstate": "STATE1",
+                "nextstateerror": "ERROR",
+                "timeout": 0,
+                "messages": [
+                    {
+                        "configuration_name": "+PrepareChangeToState1Msg",
+                        "class_name": "Message",
+                        "destination": "App",
+                        "maxwait": 0,
+                        "function": "PrepareNextState",
+                        "parameters": [
+                            {
+                                "configuration_name": "+Parameters",
+                                "parameters": [
+                                    {
+                                        "name": "param1",
+                                        "value": "State1"
+                                    }
+                                ],
+                                "class_name": "Parameters"
+                            }
+                        ],
+                        "mode": "ExpectsReply"
+                    },
+                    {
+                        "configuration_name": "+StartNextStateExecutionMsg",
+                        "class_name": "Message",
+                        "destination": "App",
+                        "maxwait": 0,
+                        "function": "StartNextStateExecution",
+                        "parameters": [],
+                        "mode": "ExpectsReply"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 140597366833312,
+            "edge_type": 1,
+            "start": 140597366345104,
+            "end": 140597366833600,
+            "state_message": {
+                "configuration_name": "+ERROR",
+                "class_name": "StateMachineEvent",
+                "nextstate": "ERROR",
+                "nextstateerror": "ERROR",
+                "timeout": 0,
+                "messages": []
+            }
+        },
+        {
+            "id": 140597366836096,
+            "edge_type": 1,
+            "start": 140597366835424,
+            "end": 140597366833264,
+            "state_message": {
+                "configuration_name": "+ERROR",
+                "class_name": "StateMachineEvent",
+                "nextstate": "ERROR",
+                "nextstateerror": "ERROR",
+                "timeout": 0,
+                "messages": []
+            }
+        },
+        {
+            "id": 140597366835856,
+            "edge_type": 1,
+            "start": 140597366834224,
+            "end": 140597366343520,
+            "state_message": {
+                "configuration_name": "+RESET",
+                "class_name": "StateMachineEvent",
+                "nextstate": "STATE1",
+                "nextstateerror": "STATE1",
+                "timeout": 0,
+                "messages": [
+                    {
+                        "configuration_name": "+StopCurrentStateExecutionMsg",
+                        "class_name": "Message",
+                        "destination": "App",
+                        "maxwait": 0,
+                        "function": "StopCurrentStateExecution",
+                        "parameters": [],
+                        "mode": "ExpectsReply"
+                    },
+                    {
+                        "configuration_name": "+PrepareChangeToState1Msg",
+                        "class_name": "Message",
+                        "destination": "App",
+                        "maxwait": 0,
+                        "function": "PrepareNextState",
+                        "parameters": [
+                            {
+                                "configuration_name": "+Parameters",
+                                "parameters": [
+                                    {
+                                        "name": "param1",
+                                        "value": "State1"
+                                    }
+                                ],
+                                "class_name": "Parameters"
+                            }
+                        ],
+                        "mode": "ExpectsReply"
+                    },
+                    {
+                        "configuration_name": "+StartNextStateExecutionMsg",
+                        "class_name": "Message",
+                        "destination": "App",
+                        "maxwait": 0,
+                        "function": "StartNextStateExecution",
+                        "parameters": [],
+                        "mode": "ExpectsReply"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 140597366127392,
+            "edge_type": 1,
+            "start": 140597366833360,
+            "end": 140597366343232,
+            "state_message": {
+                "configuration_name": "+RESET",
+                "class_name": "StateMachineEvent",
+                "nextstate": "STATE1",
+                "nextstateerror": "STATE1",
+                "timeout": 0,
+                "messages": [
+                    {
+                        "configuration_name": "+StopCurrentStateExecutionMsg",
+                        "class_name": "Message",
+                        "destination": "App",
+                        "maxwait": 0,
+                        "function": "StopCurrentStateExecution",
+                        "parameters": [],
+                        "mode": "ExpectsReply"
+                    },
+                    {
+                        "configuration_name": "+PrepareChangeToState1Msg",
+                        "class_name": "Message",
+                        "destination": "App",
+                        "maxwait": 0,
+                        "function": "PrepareNextState",
+                        "parameters": [
+                            {
+                                "configuration_name": "+Parameters",
+                                "parameters": [
+                                    {
+                                        "name": "param1",
+                                        "value": "State1"
+                                    }
+                                ],
+                                "class_name": "Parameters"
+                            }
+                        ],
+                        "mode": "ExpectsReply"
+                    },
+                    {
+                        "configuration_name": "+StartNextStateExecutionMsg",
+                        "class_name": "Message",
+                        "destination": "App",
+                        "maxwait": 0,
+                        "function": "StartNextStateExecution",
+                        "parameters": [],
+                        "mode": "ExpectsReply"
+                    }
+                ]
+            }
+        }
+    ],
+    "version_uuid": "9fbf42cb-ed47-4495-9c69-618bd695c692"
+}

@@ -1,0 +1,113 @@
+{
+    "id": 140597366140496,
+    "scene_width": 6400,
+    "scene_height": 6400,
+    "nodes": [
+        {
+            "id": 140597366112416,
+            "title": "Constants (ConstantGAM)",
+            "pos_x": 3054.5,
+            "pos_y": 3132.5,
+            "inputs": [],
+            "outputs": [
+                {
+                    "id": 140597366525136,
+                    "index": -1,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 0,
+                    "label": "newsignal"
+                }
+            ],
+            "content": {},
+            "plugin": "marte2",
+            "class_name": "ConstantGAM",
+            "configuration_name": "Constants",
+            "comment": "",
+            "parameters": {
+                "Class name": "ConstantGAM"
+            },
+            "inputsb": [],
+            "outputsb": [
+                [
+                    "newsignal",
+                    {
+                        "MARTeConfig": {
+                            "DataSource": "DDB0",
+                            "Type": "uint32",
+                            "NumberOfDimensions": "1",
+                            "NumberOfElements": "1",
+                            "Alias": "newsignal",
+                            "Default": "5"
+                        }
+                    }
+                ]
+            ],
+            "outputs_identities": {
+                "0": [
+                    "Conversion"
+                ]
+            },
+            "input_identities": {},
+            "type": "MARTe2Node",
+            "scene_name": "State1-Thread1"
+        },
+        {
+            "id": 140597366115920,
+            "title": "Conversion (ConversionGAM)",
+            "pos_x": 3039.0,
+            "pos_y": 3132.5,
+            "inputs": [
+                {
+                    "id": 140597366498400,
+                    "index": -1,
+                    "multi_edges": false,
+                    "position": 2,
+                    "socket_type": 0,
+                    "label": "newsignal"
+                }
+            ],
+            "outputs": [],
+            "content": {},
+            "plugin": "marte2",
+            "class_name": "ConversionGAM",
+            "configuration_name": "Conversion",
+            "comment": "",
+            "parameters": {
+                "Class name": "ConversionGAM"
+            },
+            "inputsb": [
+                [
+                    "newsignal",
+                    {
+                        "MARTeConfig": {
+                            "DataSource": "DDB0",
+                            "Type": "uint32",
+                            "NumberOfDimensions": "1",
+                            "NumberOfElements": "1",
+                            "Alias": "newsignal"
+                        }
+                    }
+                ]
+            ],
+            "outputsb": [],
+            "outputs_identities": {},
+            "input_identities": {
+                "-1": [
+                    "Constants"
+                ]
+            },
+            "type": "MARTe2Node",
+            "scene_name": "State1-Thread1"
+        }
+    ],
+    "edges": [
+        {
+            "id": 140597366500800,
+            "edge_type": 2,
+            "start": 140597366525136,
+            "end": 140597366498400
+        }
+    ],
+    "version_uuid": "8a646509-231c-49b4-ba78-cc6c1cc92ae9"
+}

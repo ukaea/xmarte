@@ -1,0 +1,166 @@
+{
+    "configuration_name": "+StateMachine",
+    "class_name": "StateMachine",
+    "states": [
+        {
+            "configuration_name": "+INITIAL",
+            "class_name": "ReferenceContainer",
+            "objects": [
+                {
+                    "configuration_name": "+START",
+                    "class_name": "StateMachineEvent",
+                    "nextstate": "STATE1",
+                    "nextstateerror": "ERROR",
+                    "timeout": 0,
+                    "messages": [
+                        {
+                            "configuration_name": "+PrepareChangeToState1Msg",
+                            "class_name": "Message",
+                            "destination": "App",
+                            "maxwait": 0,
+                            "function": "PrepareNextState",
+                            "parameters": {
+                                "configuration_name": "+Parameters",
+                                "class_name": "ConfigurationDatabase",
+                                "objects": {
+                                    "param1": "State1"
+                                }
+                            },
+                            "mode": "ExpectsReply"
+                        },
+                        {
+                            "configuration_name": "+StartNextStateExecutionMsg",
+                            "class_name": "Message",
+                            "destination": "App",
+                            "maxwait": 0,
+                            "function": "StartNextStateExecution",
+                            "parameters": {
+                                "configuration_name": "+Parameters",
+                                "class_name": "ConfigurationDatabase",
+                                "objects": {}
+                            },
+                            "mode": "ExpectsReply"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "configuration_name": "+STATE1",
+            "class_name": "ReferenceContainer",
+            "objects": [
+                {
+                    "configuration_name": "+ERROR",
+                    "class_name": "StateMachineEvent",
+                    "nextstate": "ERROR",
+                    "nextstateerror": "ERROR",
+                    "timeout": 0,
+                    "messages": []
+                }
+            ]
+        },
+        {
+            "configuration_name": "+ERROR",
+            "class_name": "ReferenceContainer",
+            "objects": [
+                {
+                    "configuration_name": "+ENTER",
+                    "class_name": "ReferenceContainer",
+                    "objects": [
+                        {
+                            "configuration_name": "+StopCurrentStateExecutionMsg",
+                            "class_name": "Message",
+                            "destination": "App",
+                            "maxwait": 0,
+                            "function": "StopCurrentStateExecution",
+                            "parameters": {
+                                "configuration_name": "+Parameters",
+                                "class_name": "ConfigurationDatabase",
+                                "objects": {}
+                            },
+                            "mode": "ExpectsReply"
+                        },
+                        {
+                            "configuration_name": "+PrepareChangeToErrorMsg",
+                            "class_name": "Message",
+                            "destination": "App",
+                            "maxwait": 0,
+                            "function": "PrepareNextState",
+                            "parameters": {
+                                "configuration_name": "+Parameters",
+                                "class_name": "ConfigurationDatabase",
+                                "objects": {
+                                    "param1": "Error"
+                                }
+                            },
+                            "mode": "ExpectsReply"
+                        },
+                        {
+                            "configuration_name": "+StartNextStateExecutionMsg",
+                            "class_name": "Message",
+                            "destination": "App",
+                            "maxwait": 0,
+                            "function": "StartNextStateExecution",
+                            "parameters": {
+                                "configuration_name": "+Parameters",
+                                "class_name": "ConfigurationDatabase",
+                                "objects": {}
+                            },
+                            "mode": "ExpectsReply"
+                        }
+                    ]
+                },
+                {
+                    "configuration_name": "+RESET",
+                    "class_name": "StateMachineEvent",
+                    "nextstate": "STATE1",
+                    "nextstateerror": "STATE1",
+                    "timeout": 0,
+                    "messages": [
+                        {
+                            "configuration_name": "+StopCurrentStateExecutionMsg",
+                            "class_name": "Message",
+                            "destination": "App",
+                            "maxwait": 0,
+                            "function": "StopCurrentStateExecution",
+                            "parameters": {
+                                "configuration_name": "+Parameters",
+                                "class_name": "ConfigurationDatabase",
+                                "objects": {}
+                            },
+                            "mode": "ExpectsReply"
+                        },
+                        {
+                            "configuration_name": "+PrepareChangeToState1Msg",
+                            "class_name": "Message",
+                            "destination": "App",
+                            "maxwait": 0,
+                            "function": "PrepareNextState",
+                            "parameters": {
+                                "configuration_name": "+Parameters",
+                                "class_name": "ConfigurationDatabase",
+                                "objects": {
+                                    "param1": "State1"
+                                }
+                            },
+                            "mode": "ExpectsReply"
+                        },
+                        {
+                            "configuration_name": "+StartNextStateExecutionMsg",
+                            "class_name": "Message",
+                            "destination": "App",
+                            "maxwait": 0,
+                            "function": "StartNextStateExecution",
+                            "parameters": {
+                                "configuration_name": "+Parameters",
+                                "class_name": "ConfigurationDatabase",
+                                "objects": {}
+                            },
+                            "mode": "ExpectsReply"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

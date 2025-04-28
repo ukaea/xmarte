@@ -1,0 +1,40 @@
+[
+    {
+        "configuration_name": "+State1",
+        "class_name": "RealTimeState",
+        "threads": {
+            "configuration_name": "Threads",
+            "class_name": "ReferenceContainer",
+            "objects": [
+                {
+                    "configuration_name": "+Thread1",
+                    "class_name": "RealTimeThread",
+                    "cpu_mask": 4294967295,
+                    "functions": []
+                },
+                {
+                    "configuration_name": "+TestThread",
+                    "class_name": "RealTimeThread",
+                    "cpu_mask": 254,
+                    "functions": []
+                }
+            ]
+        }
+    },
+    {
+        "configuration_name": "+Error",
+        "class_name": "RealTimeState",
+        "threads": {
+            "configuration_name": "Threads",
+            "class_name": "ReferenceContainer",
+            "objects": [
+                {
+                    "configuration_name": "+Thread1",
+                    "class_name": "RealTimeThread",
+                    "cpu_mask": 4294967295,
+                    "functions": []
+                }
+            ]
+        }
+    }
+]

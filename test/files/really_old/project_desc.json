@@ -1,0 +1,15 @@
+{
+    "http": {
+        "use_http": 2,
+        "http_folder": "C:\\Temp"
+    },
+    "misc": {
+        "timingsource": "TestTiming",
+        "gamsources": [
+            "DDB0",
+            "DDBTest"
+        ],
+        "scheduler": "FastScheduler"
+    },
+    "app_name": "TestApp"
+}
