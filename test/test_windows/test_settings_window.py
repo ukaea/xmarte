@@ -15,6 +15,8 @@ from xmarte.qt5.libraries.functions import getUserFolder
 
 top_dir = os.getcwd()
 
+user_dir = os.path.expanduser('~')
+
 def open_settings_menu(mainwindow) -> None:
     # Start by resetting the settings
     config_mgr = mainwindow.API.getServiceByName("ConfigManager")
@@ -121,7 +123,7 @@ def test_modify_remote_save(mainwindow, monkeypatch, qtbot):
     del copy_settings['ftp_username']
     del copy_settings['ftp_password']
 
-    assert copy_settings == {'temp_folder': '/root/.xmarte/', 'use_remote': False, 'remote_server': '127.0.0.1', 'remote_http_port': '1', 'remote_ftp_port': '2'}
+    assert copy_settings == {'temp_folder': f'{user_dir}/.xmarte/', 'use_remote': False, 'remote_server': '127.0.0.1', 'remote_http_port': '1', 'remote_ftp_port': '2'}
     
 def test_modify_remote_cancel(mainwindow, monkeypatch, qtbot):
     settings_wnd = open_settings_menu(mainwindow)
@@ -134,7 +136,7 @@ def test_modify_remote_cancel(mainwindow, monkeypatch, qtbot):
     del copy_settings['ftp_username']
     del copy_settings['ftp_password']
 
-    assert copy_settings == {'temp_folder': '/root/.xmarte/', 'use_remote': False, 'remote_server': '127.0.0.1', 'remote_http_port': '8001', 'remote_ftp_port': '8234'}
+    assert copy_settings == {'temp_folder': f'{user_dir}/.xmarte/', 'use_remote': False, 'remote_server': '127.0.0.1', 'remote_http_port': '8001', 'remote_ftp_port': '8234'}
     
 def set_compile(settings_wnd):
     self = settings_wnd.panel
@@ -156,7 +158,7 @@ def test_modify_compile_save(mainwindow, monkeypatch, qtbot):
     copy_settings = copy.deepcopy(mainwindow.settings['CompilationPanel'])
     del copy_settings['ftp_username']
     del copy_settings['ftp_password']
-    assert copy_settings == {'temp_folder': '/root/.xmarte/compile', 'use_remote': False, 'remote_server': '127.30747.232987.237947',
+    assert copy_settings == {'temp_folder': f'{user_dir}/.xmarte/compile', 'use_remote': False, 'remote_server': '127.30747.232987.237947',
                             'remote_http_port': '1', 'remote_ftp_port': '2', 'static': False}
     
 def test_modify_compile_cancel(mainwindow, monkeypatch, qtbot):
@@ -169,7 +171,7 @@ def test_modify_compile_cancel(mainwindow, monkeypatch, qtbot):
     copy_settings = copy.deepcopy(mainwindow.settings['CompilationPanel'])
     del copy_settings['ftp_username']
     del copy_settings['ftp_password']
-    assert copy_settings == {'temp_folder': '/root/.xmarte/compile', 'use_remote': False, 'remote_server': '127.0.0.1', 'remote_http_port': '8012',
+    assert copy_settings == {'temp_folder': f'{user_dir}/.xmarte/compile', 'use_remote': False, 'remote_server': '127.0.0.1', 'remote_http_port': '8012',
                             'remote_ftp_port': '8235',  'static': True}
     
 def set_default(settings_wnd):
@@ -259,15 +261,15 @@ def test_save_to_file(mainwindow, qtbot):
     del data['RemotePanel']['ftp_password']
     del data['RemotePanel']['ftp_username']
     assert data == {'CompilationPanel': {'remote_ftp_port': '2', 'remote_http_port': '1', 'remote_server': '127.30747.232987.237947',
-                                         'static': False, 'temp_folder': '/root/.xmarte/compile', 'use_remote': False},
+                                         'static': False, 'temp_folder': f'{user_dir}/.xmarte/compile', 'use_remote': False},
                     'DefaultPanel': {'GAMDataSource': 'DDBIudij', 'HTTP_folder': '/jdgakjdg', 'Scheduler': 'FastScheduler',
                                      'TimingDataSource': 'Timidbueg', 'use_http': True},
                    'GeneralPanel': {'diff_tool': 'meld', 'file_description': 'Test bespoke configuration', 'file_extension': 'xms',
                                     'file_location': top_dir, 'split_view': 'MARTe2ConfigFormat', 'test_handler': 'marte2'},
-                   'RemotePanel': {'remote_ftp_port': '2', 'remote_http_port': '1', 'remote_server': '127.0.0.1', 'temp_folder': '/root/.xmarte/',
+                   'RemotePanel': {'remote_ftp_port': '2', 'remote_http_port': '1', 'remote_server': '127.0.0.1', 'temp_folder': f'{user_dir}/.xmarte/',
                                    'use_remote': False}, 'TestPanel': {'Execution Rate (Hz)': '354', 'Max Cycles': '4658', 'solver': 'MARTe2'},
                   'gui': {'scene_height': 6400, 'scene_width': 6400}, 
-                  'hidden': {'recovery_document': '/root/.xmarte/recovery.xmt'}}
+                  'hidden': {'recovery_document': f'{user_dir}/.xmarte/recovery.xmt'}}
 
 def test_cancel_to_file(mainwindow, qtbot):
     settings_wnd = open_settings_menu(mainwindow)
@@ -293,13 +295,13 @@ def test_cancel_to_file(mainwindow, qtbot):
     del data['CompilationPanel']['ftp_username']
     del data['RemotePanel']['ftp_password']
     del data['RemotePanel']['ftp_username']
-    assert data == {'CompilationPanel': {'remote_ftp_port': '8235', 'remote_http_port': '8012', 'remote_server': '127.0.0.1', 'static': True, 'temp_folder': '/root/.xmarte/compile', 'use_remote': False}, 
+    assert data == {'CompilationPanel': {'remote_ftp_port': '8235', 'remote_http_port': '8012', 'remote_server': '127.0.0.1', 'static': True, 'temp_folder': f'{user_dir}/.xmarte/compile', 'use_remote': False}, 
                     'DefaultPanel': {'GAMDataSource': 'DDB0', 'HTTP_folder': '', 'Scheduler': 'GAMScheduler', 'TimingDataSource': 'TimingsDataSource', 'use_http': False},
                    'GeneralPanel': {'diff_tool': 'meld', 'file_description': 'xMARTe Design', 'file_extension': 'xmt', 'file_location': top_dir, 'split_view': 'MARTe2ConfigFormat', 'test_handler': 'marte2'}, 
-                   'RemotePanel': {'remote_ftp_port': '8234', 'remote_http_port': '8001', 'remote_server': '127.0.0.1', 'temp_folder': '/root/.xmarte/', 'use_remote': False}, 
+                   'RemotePanel': {'remote_ftp_port': '8234', 'remote_http_port': '8001', 'remote_server': '127.0.0.1', 'temp_folder': f'{user_dir}/.xmarte/', 'use_remote': False}, 
                    'TestPanel': {'Execution Rate (Hz)': '500', 'Max Cycles': '500', 'solver': 'MARTe2'}, 
                    'gui': {'scene_height': 6400, 'scene_width': 6400}, 
-                   'hidden': {'recovery_document': '/root/.xmarte/recovery.xmt'}}
+                   'hidden': {'recovery_document': f'{user_dir}/.xmarte/recovery.xmt'}}
 
 # Function to load the key
 def load_key():
