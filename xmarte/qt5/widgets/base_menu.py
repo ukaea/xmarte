@@ -54,8 +54,10 @@ class BaseFileMenu:
         self.parent.state_scenes = {}
 
         state_service.setupStateScenes()
-
-        state_service.thread_wdgt.currentIndexChanged.disconnect()
+        try:
+            state_service.thread_wdgt.currentIndexChanged.disconnect()
+        except TypeError:
+            pass
         state_service.thread_wdgt.clear()
         state_service.populateCombos(self.parent.state_scenes)
         state_service.thread_wdgt.currentIndexChanged.connect(state_service.changeThread)

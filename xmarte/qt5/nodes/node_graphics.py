@@ -35,23 +35,20 @@ class NodeContent(QDMNodeContentWidget):
         '''
         # Get Current Height
         if self.node.grNode:
-            height = self.node.grNode.height
             self.setFixedHeight(int(self.node.grNode.height - self.node.grNode.title_height))
             # Check the Inputs
-            nSockets = self.node.inputs
-            input_height = sum(a.grSocket.boundingRect().height() for a in nSockets)
-            if (input_height * 1.4) > height:
-                height = input_height * 1.4
-                self.setFixedHeight(int(height + self.node.grNode.title_height))
-                self.node.grNode.height = height + (self.node.grNode.title_height * 2)
+            if self.node.inputs:
+                nSockets = self.node.inputs
+                input_height = len(nSockets) * self.node.socket_spacing
+                self.setFixedHeight(int(input_height + self.node.grNode.title_height))
+                self.node.grNode.height = input_height + (self.node.grNode.title_height * 2)
 
             # Check the Outputs
-            nSockets = self.node.outputs
-            output_height = sum(a.grSocket.boundingRect().height() for a in nSockets)
-            if (output_height * 1.4) > height:
-                height = output_height * 1.4
-                self.setFixedHeight(int(height + self.node.grNode.title_height))
-                self.node.grNode.height = height + (self.node.grNode.title_height * 2)
+            if self.node.outputs:
+                nSockets = self.node.outputs
+                output_height = len(nSockets) * self.node.socket_spacing
+                self.setFixedHeight(int(output_height + self.node.grNode.title_height))
+                self.node.grNode.height = output_height + (self.node.grNode.title_height * 2)
 
         self.node.updateSocketPositions()
 

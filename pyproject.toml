@@ -1,6 +1,6 @@
 [project]
 name = "xmarte"
-version = "0.1.2"
+version = "1.1.0"
 description = "A GUI Application for configuration MARTe2 applications."
 readme = "README.md"
 authors = [

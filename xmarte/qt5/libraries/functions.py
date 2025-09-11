@@ -13,6 +13,8 @@ import yaml
 
 from cryptography.fernet import Fernet
 
+from PyQt5.QtWidgets import QMessageBox, QApplication
+
 class PluginException(Exception):
     ''' Our generic application exception for plugins '''
 
@@ -34,15 +36,64 @@ def fixSocketOrdering(node):
     new_outputsb = [() for a in outputsb]
     for index, input_socket in enumerate(node.inputs):
         name = input_socket.label
-        signal = [a for a in inputsb if a[0] == name][0]
+        try:
+            signal = [a for a in inputsb if a[0] == name][0]
+        except IndexError:
+            fixSignals(node)
+            # No known fix yet
+            continue
+            #signal = [a for a in inputsb if a[0] == name][0]
         new_inputsb[index] = signal
     node.inputsb = new_inputsb
     for index, output_socket in enumerate(node.outputs):
         name = output_socket.label
-        signal = [a for a in outputsb if a[0] == name][0]
+        try:
+            signal = [a for a in outputsb if a[0] == name][0]
+        except IndexError:
+            fixSignals(node)
+            #signal = [a for a in outputsb if a[0] == name][0]
+            continue
         new_outputsb[index] = signal
     node.outputsb = new_outputsb
     node.scene.large_import = prev
+
+def fixSignals(node):
+    ''' This function fixes a signal issue by detecting whether a socket
+    has a corresponding signal definition, if not, all are deleted. '''
+    modified = False
+
+    expected_count = len(node.inputsb)
+
+    if len(node.inputs) > expected_count:
+        # Delete the extra objects
+        for obj in node.inputs[expected_count:]:
+            obj.delete()
+        # Trim the object_list
+        del node.inputs[expected_count:]
+        modified = True
+    
+    expected_count = len(node.outputsb)
+
+    if len(node.outputs) > expected_count:
+        # Delete the extra objects
+        for obj in node.outputs[expected_count:]:
+            obj.delete()
+        # Trim the object_list
+        del node.outputs[expected_count:]
+        modified = True
+
+    if modified:
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Warning)
+        msg.setWindowTitle("Corrupted Signals")
+        msg.setText(
+            "The following node had corrupted signals defined for its sockets.\n\n"
+            "As a result, the signals had to be deleted. "
+            "Please review the node and readjust as needed.\n\n"
+            f"The node was: {node.configuration_name}"
+        )
+        msg.setStandardButtons(QMessageBox.Ok)
+        msg.exec_()
 
 def loadPlugin(filename, application=None, register=True):
     ''' Generic function for loading a module file '''

@@ -2,7 +2,11 @@
 The Application Scene Component
 '''
 
+from PyQt5.QtGui import QTransform
+
 from martepy.marte2.generic_application import MARTe2Application
+
+from nodeeditor.node_graphics_scene import QDMGraphicsScene
 
 from xmarte.qt5.nodes.node_factory import Factory
 from xmarte.qt5.widgets.base_scene import BaseScene
@@ -10,6 +14,21 @@ from xmarte.qt5.widgets.base_scene import BaseScene
 factory = Factory()
 factory.loadRemote()
 
+class EditorQGraphicsScene(QDMGraphicsScene):
+    def mousePressEvent(self, event):
+        # print(f"Scene clicked at: {event.scenePos()}")
+        clicked_item = self.itemAt(event.scenePos(), QTransform())
+        if clicked_item is None:
+            mainpanel = self.scene.application.rightpanel
+            if hasattr(mainpanel, "parameterbar"):
+                if mainpanel.parameterbar is not None:
+                    mainpanel.vlayout.removeWidget(mainpanel.parameterbar)
+                    mainpanel.parameterbar = None
+                    if self.changed:
+                        self.scene.has_been_modified = True
+                    self.changed = False
+        # Optionally call base class to allow default behavior
+        super().mousePressEvent(event)
 
 class EditorScene(BaseScene):
     '''
@@ -52,6 +71,11 @@ class EditorScene(BaseScene):
     def saveRecovery(self):
         ''' Save Recovery action '''
         # self.application.editor.fileSave(self.application.recovery_document)
+
+    def initUI(self):
+        """Set up Graphics Scene Instance"""
+        self.grScene = EditorQGraphicsScene(self)
+        self.grScene.setGrScene(self.scene_width, self.scene_height)
 
     def nodeClassSelectorFunction(self, data):
         ''' Node Classifier using factory '''

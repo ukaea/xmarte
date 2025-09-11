@@ -8,7 +8,7 @@ from martepy.marte2.datasource import MARTe2DataSource
 from martepy.functions.extra_functions import getname
 
 from xmarte.qt5.libraries.functions import fixSocketOrdering
-
+from xmarte.qt5.libraries.functions import fixSignals
 from xmarte.qt5.widgets.scene import EditorScene
 
 class ExecutionOrderGroup:
@@ -104,18 +104,26 @@ class NodeHandler:
         for node in nodes:
             for input_socket, input_config in zip(node.inputs,node.inputsb):
                # Now we enforce rules based on what the GAM is (for now)
-                if 'Default' in input_config[1]['MARTeConfig'].keys():
-                    del input_config[1]['MARTeConfig']['Default']
-                if node.btype == "IOGAM":
-                    if len(input_socket.edges) > 0:
-                        source = input_socket.edges[0].start_socket.node
-                        if isinstance(node.application.API.toGAM(source), MARTe2DataSource):
-                            input_config[1]['MARTeConfig']['DataSource'] = getname(source)
+                try: 
+                    if 'Default' in input_config[1]['MARTeConfig'].keys():
+                        del input_config[1]['MARTeConfig']['Default']
+                    if node.btype == "IOGAM":
+                        if len(input_socket.edges) > 0:
+                            source = input_socket.edges[0].start_socket.node
+                            if isinstance(node.application.API.toGAM(source), MARTe2DataSource):
+                                input_config[1]['MARTeConfig']['DataSource'] = getname(source)
+                except IndexError:
+                    fixSignals(node)
+                    continue
             for output_socket, output_config in zip(node.outputs, node.outputsb):
-                if len(output_socket.edges) > 0:
-                    source = output_socket.edges[0].end_socket.node
-                    if isinstance(node.application.API.toGAM(source), MARTe2DataSource):
-                        output_config[1]['MARTeConfig']['DataSource'] = getname(source)
+                try:
+                    if len(output_socket.edges) > 0:
+                        source = output_socket.edges[0].end_socket.node
+                        if isinstance(node.application.API.toGAM(source), MARTe2DataSource):
+                            output_config[1]['MARTeConfig']['DataSource'] = getname(source)
+                except IndexError:
+                    fixSignals(node)
+                    continue
 
     @staticmethod
     def recursiveRankInputsIfNotRank0(

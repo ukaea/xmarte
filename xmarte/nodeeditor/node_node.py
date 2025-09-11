@@ -14,10 +14,12 @@ class XMARTeNode(Node):
         Redraw our sockets
         '''
         if hasattr(self, 'inputs'):
-            for in_socket in self.inputs:
+            for i, in_socket in enumerate(self.inputs):
+                in_socket.index = i
                 in_socket.setSocketPosition()
         if hasattr(self, 'outputs'):
-            for out_socket in self.outputs:
+            for i, out_socket in enumerate(self.outputs):
+                out_socket.index = i
                 out_socket.setSocketPosition()
                 
     def serialize(self) -> OrderedDict:

@@ -8,6 +8,7 @@ from PyQt5.QtWidgets import (
 )
 
 from martepy.marte2.datasource import MARTe2DataSource
+from martepy.marte2.gam import MARTe2GAM
 from martepy.marte2.objects import (MARTe2StateMachine,
                                     MARTe2StateMachineEvent,
                                     MARTe2ReferenceContainer)
@@ -273,10 +274,14 @@ class StateDefinitionService(Service):
     @staticmethod
     def getAllDataSources(application) -> list:
         '''Get all datasources in the application.'''
-        return [
-            a for a in StateDefinitionService.getAllNodes(application.state_scenes)
-            if isinstance(application.API.toGAM(a), MARTe2DataSource)
-        ]
+        nodes = []
+        for state, threads in application.state_scenes.items():
+            for name, thread in threads.items():
+                if any(isinstance(application.API.toGAM(a), MARTe2GAM) for a in thread.nodes):
+                    for node in thread.nodes:
+                        if isinstance(application.API.toGAM(node), MARTe2DataSource):
+                            nodes.append(node)
+        return nodes
 
     @staticmethod
     def getAllNodes(states) -> list:

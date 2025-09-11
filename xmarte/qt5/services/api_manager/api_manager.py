@@ -196,6 +196,9 @@ class APIManager(Service):
                         # Check if we're a datasource
                         if node.serialize()['plugin'] == 'marte2_datasources':
                             ddb = node.configuration_name.replace('+','')
+                        else:  # default to DDB0
+                            actual_signal[1]['MARTeConfig']['DataSource'] = 'DDB0'
+                            ddb = actual_signal[1]['MARTeConfig']['DataSource']
                     socket = output
                     if ddb:
                         if ddb not in ddb_signals:
@@ -213,7 +216,11 @@ class APIManager(Service):
                         alias = getAlias(actual_signal)
                         ddb = node.configuration_name.replace('+','')
                         if not node.plugin == 'marte2_datasources':
-                            ddb = actual_signal[1]['MARTeConfig']['DataSource']
+                            try:
+                                ddb = actual_signal[1]['MARTeConfig']['DataSource']
+                            except KeyError:
+                                actual_signal[1]['MARTeConfig']['DataSource'] = 'DDB0'
+                                ddb = actual_signal[1]['MARTeConfig']['DataSource']
                         if ddb in ddb_signals:
                             if alias in ddb_signals[ddb]:
                                 XMARTeEdge(scene,ddb_signals[ddb][alias],
@@ -336,15 +343,27 @@ class APIManager(Service):
         state_service.thread_wdgt.update()
         self.application.state_scenes = {}
         # Open the tar file for reading
-        with tarfile.open(file_path, 'r') as tar:
-            file_names = tar.getnames()
-            # Never been upconverted - needs upconverting, we can only assume it has the issues
-            # from just prior to us inventing this method
-            version = 'never'
-            if 'version' in file_names:
-                file_info = tar.getmember("version")
-                file_content = tar.extractfile(file_info).read()
-                version = file_content.decode('utf-8')
+        try:
+            with tarfile.open(file_path, 'r') as tar:
+                file_names = tar.getnames()
+                # Never been upconverted - needs upconverting, we can only assume it has the issues
+                # from just prior to us inventing this method
+                version = 'never'
+                if 'version' in file_names:
+                    file_info = tar.getmember("version")
+                    file_content = tar.extractfile(file_info).read()
+                    version = file_content.decode('utf-8')
+        except tarfile.ReadError:
+            QApplication.restoreOverrideCursor()
+            QApplication.setOverrideCursor(Qt.ArrowCursor)
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Critical)
+            msg.setWindowTitle("File Error")
+            msg.setText("Could not open file, read error")
+            msg.setStandardButtons(QMessageBox.Ok)
+            msg.exec_()
+            self.application.menuBar.newAction.trigger()
+            return
 
         file_support_service.upconvert(file_path, version, mfactory)
 

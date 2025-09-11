@@ -14,6 +14,7 @@ from PyQt5.QtWidgets import (
 
 from xmarte.qt5.plugins.base_plugin import GUIPlugin
 from xmarte.qt5.plugins.marte2.file_handlers.cfg import MARTe2ConfigFormat
+from xmarte.qt5.plugins.marte2.file_handlers.json import MARTe2JsonFormat
 from xmarte.qt5.plugins.widgets.hover_button import HoverButton
 
 class MARTe2GUIPlugin(GUIPlugin):
@@ -68,7 +69,7 @@ class MARTe2GUIPlugin(GUIPlugin):
 
     @staticmethod
     def getFileHandlers() -> list:
-        return [MARTe2ConfigFormat]
+        return [MARTe2ConfigFormat, MARTe2JsonFormat]
 
     def loadNodes(self, toolboxes):
         '''
