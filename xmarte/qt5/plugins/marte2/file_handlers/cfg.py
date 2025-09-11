@@ -47,10 +47,7 @@ class MARTe2ConfigFormat(FileHandlerPlugin):
         '''
         Read the application and load it
         '''
-        try:
-            app, state_machine, http_browser, http_messages = readApplication(fname)
-        except ValueError as e:
-            raise RuntimeError(e)
+        app, state_machine, http_browser, http_messages = readApplication(fname)
         state_service = self.application.API.getServiceByName("StateDefinitionService")
         app_def = self.application.API.getServiceByName("ApplicationDefinition")
         listwidget = app_def.project_prop_panel.g_edt.listbox
