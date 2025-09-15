@@ -19,7 +19,7 @@ def test_error_lbl(mainwindow,qtbot,monkeypatch) -> None:
     import_file = os.path.join(TEST_FILES_DIR,'bad_config.xmt')
     monkeypatch.setattr(QFileDialog, "getOpenFileName", lambda *args, **kwargs: (import_file, 'xmt (*.xmt)'))
     mainwindow.fileToolBar.openAction.triggered.emit()
-    assert error_wgt.error_lbl.text() == "Errors: 2"
+    assert error_wgt.error_lbl.text() == "Errors: 3"
 
 def test_error_btn(mainwindow,qtbot,monkeypatch) -> None:
     # If we click check errors, it will show the error window
@@ -27,7 +27,7 @@ def test_error_btn(mainwindow,qtbot,monkeypatch) -> None:
     monkeypatch.setattr(QFileDialog, "getOpenFileName", lambda *args, **kwargs: (import_file, 'xmt (*.xmt)'))
     mainwindow.fileToolBar.openAction.triggered.emit()
     error_wgt = next(mainwindow.editToolBar.service_layout.itemAt(a).widget() for a in range(mainwindow.editToolBar.service_layout.count()) if mainwindow.editToolBar.service_layout.itemAt(a).widget().__class__ == ErrorWidgetButton)
-    assert error_wgt.error_lbl.text() == "Errors: 2"
+    assert error_wgt.error_lbl.text() == "Errors: 3"
     error_wgt.open_wnd.clicked.emit()
     assert mainwindow.newwindow.__class__ == AppErrorWindow
     

@@ -51,7 +51,10 @@ def test_gam_datasources(mainwindow, qtbot) -> None:
 
     for i in range(3):  # configure each constant to output to a different gam datasource
         mainwindow.scene.nodes[i].onDoubleClicked(None)  # open configbarbox of constant
-        mainwindow.rightpanel.configbarBox.itemAt(4).widget().setText('1')  # add a signal
+        # add a signal
+        line_edit = mainwindow.rightpanel.configbarBox.itemAt(4).widget()
+        line_edit.setText("1")
+        line_edit.editingFinished.emit()
         mainwindow.rightpanel.configbarBox.itemAt(5).widget().clicked.emit()  # configure the signal
         mainwindow.newwindow.signal_tbl.item(0, 1).setText(f'DDB{i}')  # set the GAM datasource field
         assert mainwindow.newwindow.signal_tbl.item(0, 1).text() == f'DDB{i}'  # check the item updated

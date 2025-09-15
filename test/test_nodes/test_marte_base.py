@@ -28,12 +28,16 @@ def add_conv_to_diagram(mainwindow, qtbot):
 def modify_signal_no(add_conv_to_diagram):
     mainwindow = add_conv_to_diagram
     mainwindow.scene.nodes[0].onDoubleClicked(None)
-    mainwindow.rightpanel.configbarBox.itemAt(4).widget().setText('3')
+    line_edit = mainwindow.rightpanel.configbarBox.itemAt(4).widget()
+    line_edit.setText("3")
+    line_edit.editingFinished.emit()
     assert len(mainwindow.scene.nodes[0].inputs) == 3
     assert mainwindow.scene.nodes[0].inputsb == [('newsignal', {'MARTeConfig': {'DataSource': '', 'Type': 'uint32', 'NumberOfDimensions': '1', 'NumberOfElements': '1', 'Alias': 'newsignal'}}),
                                                   ('newsignal1', {'MARTeConfig': {'DataSource': '', 'Type': 'uint32', 'NumberOfDimensions': '1', 'NumberOfElements': '1', 'Alias': 'newsignal1'}}),
                                                  ('newsignal2', {'MARTeConfig': {'DataSource': '', 'Type': 'uint32', 'NumberOfDimensions': '1', 'NumberOfElements': '1', 'Alias': 'newsignal2'}})]
-    mainwindow.rightpanel.configbarBox.itemAt(7).widget().setText('3')
+    line_edit = mainwindow.rightpanel.configbarBox.itemAt(7).widget()
+    line_edit.setText("3")
+    line_edit.editingFinished.emit()
     assert len(mainwindow.scene.nodes[0].outputs) == 3
     assert mainwindow.scene.nodes[0].outputsb == [('newsignal', {'MARTeConfig': {'DataSource': 'DDB0', 'Type': 'uint32', 'NumberOfDimensions': '1', 'NumberOfElements': '1', 'Alias': 'newsignal'}}),
                                                   ('newsignal1', {'MARTeConfig': {'DataSource': 'DDB0', 'Type': 'uint32', 'NumberOfDimensions': '1', 'NumberOfElements': '1', 'Alias': 'newsignal1'}}),

@@ -101,10 +101,10 @@ class NodeHandler:
 
         # If the input is a datasource, make sure we set the DataSource field
         # Set the Alias to the input name
-        for node in nodes:
+        for node in nodes: # pylint: disable=R1702
             for input_socket, input_config in zip(node.inputs,node.inputsb):
                # Now we enforce rules based on what the GAM is (for now)
-                try: 
+                try:
                     if 'Default' in input_config[1]['MARTeConfig'].keys():
                         del input_config[1]['MARTeConfig']['Default']
                     if node.btype == "IOGAM":

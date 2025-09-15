@@ -143,8 +143,6 @@ class MARTe2Node(UniversalNodeFeatures):
         of sync with input_signals and output_signals
         '''
 
-        pass
-
     def eval(self, index=0):
         '''
         Eval - required function definition of nodeeditor
@@ -256,7 +254,7 @@ class MARTe2Node(UniversalNodeFeatures):
             new_tuple = (self.inputsb[our_socket_index][0], {'MARTeConfig': new_cfg})
             # Persist Bus configurations for Simulink Wrapper GAM
             if 'Bus' in self.inputsb[our_socket_index][1]['MARTeConfig']:
-                new_tuple[1]['MARTeConfig']['Bus'] = self.inputsb[our_socket_index][1]['MARTeConfig']['Bus']
+                new_tuple[1]['MARTeConfig']['Bus'] = self.inputsb[our_socket_index][1]['MARTeConfig']['Bus'] # pylint: disable=C0301
             self.inputsb[our_socket_index] = new_tuple
 
             # Am I a datasource?
@@ -264,7 +262,7 @@ class MARTe2Node(UniversalNodeFeatures):
                 # Change the input signal DDB to my datasource name
                 node_from.outputsb[start_socket_idx][1][
                     'MARTeConfig']['DataSource'] = self.configuration_name.strip('+')
-            
+
             # Is my input a datasource?
             # Set the inputs DDB to the datasource name
             if isinstance(self.application.API.toGAM(node_from), MARTe2DataSource):

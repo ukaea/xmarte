@@ -55,7 +55,8 @@ class AppErrorWindow(QMainWindow):
 
     def refresh(self):
         ''' Retry the error check and re-display '''
-        exceptions = self.application.API.buildApplication().onlyErrors()
+        type_db = self.application.API.getServiceByName('TypeDefinitionService').getTypeDb()
+        exceptions = self.application.API.buildApplication().onlyErrors(type_db)
 
         self.listbox.clear()
         for exception in exceptions:

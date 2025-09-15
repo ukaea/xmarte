@@ -22,6 +22,7 @@ import qdarkgraystyle
 splash = None # pylint: disable=C0103
 
 sys.path.insert(0,os.path.dirname(os.path.dirname(__file__)))
+sys.path.insert(0,os.path.join(os.path.dirname(os.path.dirname(__file__)), 'test','marte2_python'))
 
 if __name__ == "__main__":
     app = QApplication([])

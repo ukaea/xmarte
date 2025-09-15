@@ -25,10 +25,15 @@ class ErrorWidgetButton(QWidget):
 
     def reseterrors(self, application=None):
         ''' Check the application definition for errors '''
+        type_db = None
+
         if application:
-            exceptions = application.onlyErrors()
+            app = self.parent().parent().parent
+            type_db = app.API.getServiceByName('TypeDefinitionService').getTypeDb()
+            exceptions = application.onlyErrors(type_db)
         else:
-            exceptions = self.application.API.buildApplication().onlyErrors()
+            type_db = self.application.API.getServiceByName('TypeDefinitionService').getTypeDb()
+            exceptions = self.application.API.buildApplication().onlyErrors(type_db)
         # update our label
         self.error_lbl.setText(f"Errors: {len(exceptions)}")
         return exceptions

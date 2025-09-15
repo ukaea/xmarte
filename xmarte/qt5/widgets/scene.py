@@ -15,7 +15,11 @@ factory = Factory()
 factory.loadRemote()
 
 class EditorQGraphicsScene(QDMGraphicsScene):
+    ''' The primary scene user, overrides the moude press so as to automatically
+    close the parameterbar if open when you click anywhere in the scene '''
     def mousePressEvent(self, event):
+        ''' overrides the moude press so as to automatically
+        close the parameterbar if open when you click anywhere in the scene '''
         # print(f"Scene clicked at: {event.scenePos()}")
         clicked_item = self.itemAt(event.scenePos(), QTransform())
         if clicked_item is None:

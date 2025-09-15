@@ -313,7 +313,7 @@ class APIManager(Service):
             if cursor:
                 QApplication.restoreOverrideCursor()
 
-    def loadFile(self, file_path): # pylint:disable=R0914
+    def loadFile(self, file_path): # pylint:disable=R0914, R0915
         ''' Load an application definition from file '''
         mfactory = mpyFactory()
         mfactory.loadRemote(
@@ -447,7 +447,8 @@ class APIManager(Service):
     def errorCheck(self, application, showdialog=False):
         ''' Check the given application instance for errors and show to the user '''
         # Check for errors, this could be:
-        exceptions = application.onlyErrors()
+        type_db = self.getServiceByName('TypeDefinitionService').getTypeDb()
+        exceptions = application.onlyErrors(type_db)
 
         if len(exceptions) > 0 and showdialog:
             # Prompt our user about errors (only number of, found,

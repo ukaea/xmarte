@@ -13,7 +13,7 @@ import yaml
 
 from cryptography.fernet import Fernet
 
-from PyQt5.QtWidgets import QMessageBox, QApplication
+from PyQt5.QtWidgets import QMessageBox
 
 class PluginException(Exception):
     ''' Our generic application exception for plugins '''
@@ -71,7 +71,7 @@ def fixSignals(node):
         # Trim the object_list
         del node.inputs[expected_count:]
         modified = True
-    
+
     expected_count = len(node.outputsb)
 
     if len(node.outputs) > expected_count:

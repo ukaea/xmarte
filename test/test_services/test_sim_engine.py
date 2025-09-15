@@ -34,7 +34,9 @@ def test_empty_diagram(mainwindow, mocker):
 def setup_basic(mainwindow, qtbot):
     qtbot.mouseClick(mainwindow.leftpanel.toolboxes.marte2_functions.gbox.itemAt(0).widget(), Qt.LeftButton)
     mainwindow.scene.nodes[0].onDoubleClicked(None)
-    mainwindow.rightpanel.configbarBox.itemAt(4).widget().setText('3')
+    line_edit = mainwindow.rightpanel.configbarBox.itemAt(4).widget()
+    line_edit.setText("3")
+    line_edit.editingFinished.emit()
     open_test_window(mainwindow)
     test_window = mainwindow.newwindow
     return test_window

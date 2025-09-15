@@ -13,7 +13,6 @@ from PyQt5.QtWidgets import (
     QApplication, QDialog, QLabel, QTextEdit, QPushButton,
     QVBoxLayout, QHBoxLayout, QSpacerItem, QSizePolicy
 )
-from PyQt5.QtGui import QCursor
 from PyQt5.QtCore import Qt
 
 DEBUGGING = False
@@ -33,6 +32,7 @@ def exceptionHook(exctype, value, traceback_obj):  # pylint: disable=W0613
     QApplication.setOverrideCursor(Qt.ArrowCursor)
 
     class ErrorDialog(QDialog):
+        ''' Error Dialog to display on an exception '''
         def __init__(self, exctype, value, traceback_obj):
             super().__init__()
             self.screen = app.primaryScreen()
@@ -51,7 +51,7 @@ def exceptionHook(exctype, value, traceback_obj):  # pylint: disable=W0613
             main_error = str(value)
 
             # Main error label
-            self.label = QLabel(f"<b>Unexpected exception occurred in application: {main_error}</b>")
+            self.label = QLabel(f"<b>Unexpected exception in application: {main_error}</b>")
             self.label.setWordWrap(True)
 
             # Details text area (initially hidden)
@@ -63,7 +63,7 @@ def exceptionHook(exctype, value, traceback_obj):  # pylint: disable=W0613
             # Show/Hide Details button
             self.toggle_button = QPushButton("Show Details")
             self.toggle_button.setCheckable(True)
-            self.toggle_button.toggled.connect(self.toggle_details)
+            self.toggle_button.toggled.connect(self.toggleDetails)
 
             # Yes / No buttons
             self.yes_button = QPushButton("Report")
@@ -85,7 +85,8 @@ def exceptionHook(exctype, value, traceback_obj):  # pylint: disable=W0613
 
             self.setLayout(main_layout)
 
-        def toggle_details(self, checked):
+        def toggleDetails(self, checked):
+            ''' Show or hide the details of the error and traceback '''
             self.text_area.setVisible(checked)
             self.toggle_button.setText("Hide Details" if checked else "Show Details")
             if not checked:
@@ -108,8 +109,8 @@ def exceptionHook(exctype, value, traceback_obj):  # pylint: disable=W0613
 
     if result == QDialog.Accepted:
         reportException(value, tb)  # Replace with your reporting function
-        
-    
+
+
     exc_type, exc_value, exc_tb = sys.exc_info()
     # "Clear" the exception by deleting the references
     del exc_type, exc_value, exc_tb
@@ -118,12 +119,13 @@ def exceptionHook(exctype, value, traceback_obj):  # pylint: disable=W0613
 if not DEBUGGING:
     sys.excepthook = exceptionHook
     def wrapper(args):
+        ''' Wrap around the exception for better user experience '''
         exceptionHook(args.exc_type, args.exc_value, args.traceback_obj)
     threading.excepthook = wrapper
-    
-def reportException(exception, tb):
+
+def reportException(exception, traceback):
     ''' Report an exception to our gitlab instance '''
     title: str = "exception"
-    description: str = f"""Error%3A%20%3A%20`{exception}` at {tb}"""
+    description: str = f"""Error%3A%20%3A%20`{exception}` at {traceback}"""
     url: str = f"https://github.com/ukaea/xmarte/issues/new?title={title}&body={description}"
     webbrowser.open(url)

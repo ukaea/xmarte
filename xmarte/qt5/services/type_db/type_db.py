@@ -48,3 +48,9 @@ class TypeDefinitionService(Service):
         type_db = TypeDBv2()
         type_db.loadDb(os.path.join(getUserFolder(),"typedb"))
         return list(type_db.types.keys())
+
+    def getTypeDb(self):
+        ''' Returns an instance of the type DB '''
+        type_db = TypeDBv2()
+        type_db.loadDb(os.path.join(getUserFolder(),"typedb"))
+        return type_db

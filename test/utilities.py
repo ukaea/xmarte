@@ -151,7 +151,10 @@ def create_basic_diagram(mainwindow, qtbot):
     qtbot.mouseClick(mainwindow.leftpanel.toolboxes.marte2_functions.gbox.itemAt(0).widget(), Qt.LeftButton)  # add constantGAM
     qtbot.mouseClick(mainwindow.leftpanel.toolboxes.marte2_functions.gbox.itemAt(1).widget(), Qt.LeftButton)  # add conversionGAM
     mainwindow.scene.nodes[0].onDoubleClicked(None)  # configure constantGAM
-    mainwindow.rightpanel.configbarBox.itemAt(4).widget().setText('1')  # add constant signal
+    # add constant signal
+    line_edit = mainwindow.rightpanel.configbarBox.itemAt(4).widget()
+    line_edit.setText("1")
+    line_edit.editingFinished.emit()
     # Open signal window
     mainwindow.rightpanel.configbarBox.itemAt(5).widget().clicked.emit()
     # Set value of default
@@ -160,7 +163,10 @@ def create_basic_diagram(mainwindow, qtbot):
     # Save and close signal window
     signal_window.save_button.clicked.emit()
     mainwindow.scene.nodes[1].onDoubleClicked(None)  # configure conversionGAM
-    mainwindow.rightpanel.configbarBox.itemAt(4).widget().setText('1')  # add conversion signal
+    # add conversion signal
+    line_edit = mainwindow.rightpanel.configbarBox.itemAt(4).widget()
+    line_edit.setText("1")
+    line_edit.editingFinished.emit()
     Edge = mainwindow.scene.getEdgeClass()  # get the edge class to create an edge
     XMARTeEdge(getActualScene(mainwindow), start_socket=mainwindow.scene.nodes[0].outputs[0], end_socket=mainwindow.scene.nodes[1].inputs[0], edge_type=2)  # add edge
     mainwindow.scene.nodes[1].onInputChanged(mainwindow.scene.nodes[1].inputs[0])
@@ -476,7 +482,9 @@ def create_const_for_input(mainwindow, qtbot):
     qtbot.mouseClick(mainwindow.leftpanel.toolboxes.marte2_functions.gbox.itemAt(0).widget(), Qt.LeftButton)
     node = mainwindow.scene.nodes[-1]
     node.onDoubleClicked(None)
-    mainwindow.rightpanel.configbarBox.itemAt(4).widget().setText('3')
+    line_edit = mainwindow.rightpanel.configbarBox.itemAt(4).widget()
+    line_edit.setText("3")
+    line_edit.editingFinished.emit()
     signal_window = setup_complex_const(mainwindow, node, False)
     signal_window.save_button.clicked.emit()
     return node

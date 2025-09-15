@@ -275,8 +275,8 @@ class StateDefinitionService(Service):
     def getAllDataSources(application) -> list:
         '''Get all datasources in the application.'''
         nodes = []
-        for state, threads in application.state_scenes.items():
-            for name, thread in threads.items():
+        for _, threads in application.state_scenes.items():
+            for _, thread in threads.items():
                 if any(isinstance(application.API.toGAM(a), MARTe2GAM) for a in thread.nodes):
                     for node in thread.nodes:
                         if isinstance(application.API.toGAM(node), MARTe2DataSource):

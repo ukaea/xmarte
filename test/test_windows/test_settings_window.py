@@ -38,7 +38,7 @@ def test_modify_general_save(mainwindow, monkeypatch, qtbot):
     settings_wnd.options.setCurrentRow(0) # Select the general tab
     # Try every button
     split_types = [settings_wnd.panel.sview_type.itemText(a) for a in range(settings_wnd.panel.sview_type.count())]
-    assert split_types == ['The MARTe2 executable config file'] # if you add supported files, you need to add it here also
+    assert split_types == ['The MARTe2 executable config file', 'The MARTe2 executable JSON file'] # if you add supported files, you need to add it here also
     self = settings_wnd.panel
     self.file_ext.setText('xms')
     self.filed_ext.setText('Test bespoke configuration')
@@ -73,7 +73,7 @@ def test_modify_general_cancel(mainwindow, monkeypatch, qtbot):
     settings_wnd.options.setCurrentRow(0) # Select the general tab
     # Try every button
     split_types = [settings_wnd.panel.sview_type.itemText(a) for a in range(settings_wnd.panel.sview_type.count())]
-    assert split_types == ['The MARTe2 executable config file'] # if you add supported files, you need to add it here also
+    assert split_types == ['The MARTe2 executable config file', 'The MARTe2 executable JSON file'] # if you add supported files, you need to add it here also
     self = settings_wnd.panel
     self.file_ext.setText('xms')
     self.filed_ext.setText('Test bespoke configuration')

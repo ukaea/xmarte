@@ -5,6 +5,7 @@ The JSON file handler
 from PyQt5.QtCore import pyqtRemoveInputHook
 import pdb
 
+import json
 import copy
 import os
 import shutil
@@ -14,7 +15,7 @@ from PyQt5.QtWidgets import QListWidgetItem
 from martepy.marte2.datasources import TimingDataSource
 from martepy.marte2.datasources.gam_datasource import GAMDataSource
 from martepy.marte2.objects.http.directoryresource import MARTe2HttpDirectoryResource
-from martepy.marte2.reader import readApplication
+from martepy.marte2.reader import readApplication, TreeNode
 from martepy.marte2.configwriting import JSONConfigWriter
 from martepy.marte2.objects.http.objectbrowser import MARTe2HTTPObjectBrowser
 from martepy.marte2.datasources.async_bridge import AsyncBridge
@@ -44,12 +45,43 @@ class MARTe2JsonFormat(FileHandlerPlugin):
         self.application.API.errorCheck(application)
         return str(application.writeToConfig(JSONConfigWriter()))
 
+    def buildTreeFromJSON(self, content):
+        """Read JSON string content and parse it into TreeNode classes for later interpretation"""
+        root = TreeNode("root")
+
+        def walk(value, parent, name=""):
+            if isinstance(value, dict):
+                # dictionaries become TreeNodes with children
+                node = TreeNode(name, parent)
+                parent.addChild(node)
+                for k, v in value.items():
+                    walk(v, node, k)
+            elif isinstance(value, list):
+                # lists get indexed children
+                if parent.parameters['Class'] == 'RealTimeThread':
+                    # Hacky fix for how functions are shown differently between cfg and json here
+                    # where json is a list and cfg is a string list encapsulated with '{}'
+                    # Shoulw be a parameter of parent
+                    parent.parameters['Functions'] = "{ " + " ".join(value) + " }"
+                else:
+                    node = TreeNode(name, parent)
+                    parent.addChild(node)
+                    for idx, v in enumerate(value):
+                        walk(v, node, f"[{idx}]")
+            else:
+                # primitives become parameters
+                parent.addParameter(name, str(value))
+
+        data = json.loads(content)
+        walk(data, root, "json")
+        return root.children[0]
+
     def loadFile(self, fname):
         '''
         Read the application and load it
         '''
         try:
-            app, state_machine, http_browser, http_messages = readApplication(fname)
+            app, state_machine, http_browser, http_messages = readApplication(fname, read_func=self.buildTreeFromJSON)
         except ValueError as e:
             raise RuntimeError(e)
         state_service = self.application.API.getServiceByName("StateDefinitionService")
