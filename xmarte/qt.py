@@ -124,13 +124,13 @@ class XMARTeTool(QMainWindow):
 
         self.services += [RecoveryService(self), ApplicationDefinition(self),
                           Compiler(self), FileSupportService(self)]
-        self.services += [TestExecutor(self), StateDefinitionService(self), Interfaces(self)]
+        self.services += [TestExecutor(self), StateDefinitionService(self)]
         # Manually load our check Error button
         self.API.addToolbarOptions(self.editToolBar.service_layout)
 
         self.loadPlugins()
 
-        self.services += [SplitView(self), TypeDefinitionService(self)]
+        self.services += [SplitView(self), TypeDefinitionService(self), Interfaces(self)]
 
         self.editToolBar.findChild(QtWidgets.QLayout).setExpanded(True)
         # Connect the resize signal from the EditToolbarWidget to the slot in MainWindow
