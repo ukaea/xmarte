@@ -13,6 +13,7 @@ from xmarte.qt5.services.state_service.states import StateDefinitionService
 from xmarte.qt5.services.type_db.type_db import TypeDefinitionService
 from xmarte.qt5.services.file_support.file_support import FileSupportService
 from xmarte.qt5.services.compilation.compile import Compiler
+from xmarte.qt5.services.interfaces.interfaces import Interfaces
 
 __all__ = [
     "RecoveryService",
@@ -25,5 +26,6 @@ __all__ = [
     "StateDefinitionService",
     "TypeDefinitionService",
     "FileSupportService",
-    "Compiler"
+    "Compiler",
+    "Interfaces"
 ]

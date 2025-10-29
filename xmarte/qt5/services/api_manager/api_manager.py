@@ -26,6 +26,7 @@ from martepy.marte2.datasources.gam_datasource import GAMDataSource
 from martepy.marte2.objects.message import MARTe2Message
 from martepy.marte2.factory import Factory as mpyFactory
 from martepy.marte2.datasources.timing_datasource import TimingDataSource
+from martepy.marte2.datasources.logger_datasource import LoggerDataSource
 from martepy.functions.gam_functions import getAlias
 from martepy import marte2
 
@@ -158,6 +159,19 @@ class APIManager(Service):
             False,
         )
         return node
+
+    def toInterface(self, interface_obj):
+        '''Convert interface tree to obj'''
+        cls_name = interface_obj.parameters['Class']
+        obj = self.application.factories['marte2_interfaces'].create(cls_name)()
+        data = {}
+        data['parameters'] = {k.lower(): v for k, v in interface_obj.parameters.items()}
+        data['configuration_name'] = interface_obj.name.lstrip('+')
+        data['inputsb'] = []
+        data['outputsb'] = []
+        data['comment'] = ''
+        obj.deserialize(data)
+        return obj
 
     def linkNodes(self, scene):
         '''
@@ -519,7 +533,17 @@ Would you like to review these errors?""",
             self.application.API.toGAM(datasource)
             for datasource in StateDefinitionService.getAllDataSources(self.application)
         ]
-        application.add(additional_datasources=datasources)
+        # Allow multiple instances to log to LoggerDataSource
+        unique_datasources = []
+        for datasource in datasources:
+            if isinstance(datasource, LoggerDataSource):
+                if datasource.configuration_name in [a.configuration_name for a
+                                                     in unique_datasources if
+                                                     a.class_name == 'LoggerDataSource']:
+                    continue
+            unique_datasources.append(datasource)
+
+        application.add(additional_datasources=unique_datasources)
         for gam_data in app_def.configuration['misc']['gamsources']:
             gam_datasource = GAMDataSource('+' + gam_data.lstrip('+'))
             application.add(additional_datasources=[gam_datasource])
@@ -549,17 +573,20 @@ Would you like to review these errors?""",
             application.add(states=[newstate])
 
         # If selected for HTTP Server instance - create it
-        self.buildHTTPServer(application, app_def.statemachine)
+        self._buildHTTPServer(application, app_def.statemachine)
+
+        # Get Interfaces
+        self._buildInterfaces(application)
 
         # Update names
-        self.updateNames(application)
+        self._updateNames(application)
 
         # Add State Machine
         application.add(externals=[app_def.statemachine])
         self.updateAllLargeImports(values=prev_values)
         return application
 
-    def updateNames(self, app):
+    def _updateNames(self, app):
         ''' Update the timing source definition across all datasources in an app to our config '''
         app_def = self.getServiceByName('ApplicationDefinition')
         app.app_name = app_def.configuration['app_name']  # set the application name
@@ -567,7 +594,12 @@ Would you like to review these errors?""",
             if isinstance(datasource, TimingDataSource):
                 datasource.configuration_name = app_def.configuration['misc']['timingsource']
 
-    def buildHTTPServer(self, app, statemachine=None):
+    def _buildInterfaces(self, app):
+        ''' Build the interface objects into the application from the service '''
+        interface_service = self.getServiceByName('Interfaces')
+        app.objects += interface_service.interfaces
+
+    def _buildHTTPServer(self, app, statemachine=None):
         ''' Build the HTTP Instance based on our app definition '''
         app_def = self.getServiceByName('ApplicationDefinition')
         config = app_def.configuration

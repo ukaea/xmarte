@@ -81,11 +81,14 @@ class MARTe2JsonFormat(FileHandlerPlugin):
         Read the application and load it
         '''
         try:
-            app, state_machine, http_browser, http_messages = readApplication(fname, read_func=self.buildTreeFromJSON)
+            app, state_machine, http_browser, http_messages, interfaces = readApplication(fname, read_func=self.buildTreeFromJSON)
         except ValueError as e:
             raise RuntimeError(e)
         state_service = self.application.API.getServiceByName("StateDefinitionService")
         app_def = self.application.API.getServiceByName("ApplicationDefinition")
+        interface_serv = self.application.API.getServiceByName("Interfaces")
+        interface_serv.interfaces = [self.application.API.toInterface(a) for a in interfaces]
+        interface_serv.reloadPanel()
         listwidget = app_def.project_prop_panel.g_edt.listbox
         app_def.configuration['misc']['gamsources'] = []
         scheduler = next(a for a in app.internals if a.__class__.__name__ == 'MARTe2GAMScheduler')

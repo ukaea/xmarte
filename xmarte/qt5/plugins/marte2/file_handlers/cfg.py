@@ -17,6 +17,7 @@ from martepy.marte2.objects.http.directoryresource import MARTe2HttpDirectoryRes
 from martepy.marte2.reader import readApplication
 from martepy.marte2.objects.http.objectbrowser import MARTe2HTTPObjectBrowser
 from martepy.marte2.datasources.async_bridge import AsyncBridge
+from martepy.marte2.datasources.rt_syncbridge import Synchronisation
 from martepy.marte2.datasources.logger_datasource import LoggerDataSource
 from xmarte.qt5.libraries.functions import fixSocketOrdering
 from xmarte.qt5.plugins.base_plugin import FileHandlerPlugin, SplitText
@@ -47,18 +48,21 @@ class MARTe2ConfigFormat(FileHandlerPlugin):
         '''
         Read the application and load it
         '''
-        app, state_machine, http_browser, http_messages = readApplication(fname)
+        app, state_machine, http_browser, http_messages, interfaces = readApplication(fname)
         state_service = self.application.API.getServiceByName("StateDefinitionService")
         app_def = self.application.API.getServiceByName("ApplicationDefinition")
+        interface_serv = self.application.API.getServiceByName("Interfaces")
+        interface_serv.interfaces = [self.application.API.toInterface(a) for a in interfaces]
+        interface_serv.reloadPanel()
         listwidget = app_def.project_prop_panel.g_edt.listbox
         app_def.configuration['misc']['gamsources'] = []
         scheduler = next(a for a in app.internals if a.__class__.__name__ == 'MARTe2GAMScheduler')
         app_def.configuration['misc']['scheduler'] = scheduler.class_name
         listwidget.clear()
-        state_service.loadStates(app, state_machine)
         # This needs to handle as states so we need a nice way to first populate our states combo and scenes
-        # TODO: Add support for importing HTTP Service definition
+        state_service.loadStates(app, state_machine)
         app_def.configuration['app_name'] = app.app_name
+        # Load up any HTTP objects
         if http_browser:
             app_def.configuration['http']['use_http'] = True
             app_def.http_messages = http_messages
@@ -103,7 +107,7 @@ class MARTe2ConfigFormat(FileHandlerPlugin):
                         node.inputsb = datasource.input_signals
                     else:
                         inputs = []
-                    if isinstance(datasource, AsyncBridge) or isinstance(datasource, LoggerDataSource):
+                    if isinstance(datasource, AsyncBridge) or isinstance(datasource, LoggerDataSource) or isinstance(datasource, Synchronisation):
                         # Because the asyncbridge doesn't contain any signals in it's definition
                         # But does in the states and IOGAMs communicating with it, we need to define it based on
                         # Knowing it's signals

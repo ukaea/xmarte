@@ -29,6 +29,7 @@ class MARTe2GUIPlugin(GUIPlugin):
         # Create the factories
         self.factory = Factory()
         self.datasource_factory = Factory()
+        self.interface_factory = Factory()
         datadir = os.path.dirname(martepy.__file__)
 
         # Create the services
@@ -59,9 +60,20 @@ class MARTe2GUIPlugin(GUIPlugin):
                 )
             )
         )
+        self.interface_factory.loadRemote(  # load plugin datasources
+            os.path.abspath(
+                os.path.join(
+                    datadir,
+                    'marte2',
+                    'interfaces',
+                    'interfaces.json'
+                )
+            )
+        )
         self.loadNodes(self.application.leftpanel.toolboxes)  # load GUI functions
         self.application.factories['marte2'] = self.factory
         self.application.factories['marte2_datasources'] = self.datasource_factory
+        self.application.factories['marte2_interfaces'] = self.interface_factory
 
     @staticmethod
     def getServices():

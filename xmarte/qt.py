@@ -124,7 +124,7 @@ class XMARTeTool(QMainWindow):
 
         self.services += [RecoveryService(self), ApplicationDefinition(self),
                           Compiler(self), FileSupportService(self)]
-        self.services += [TestExecutor(self), StateDefinitionService(self)]
+        self.services += [TestExecutor(self), StateDefinitionService(self), Interfaces(self)]
         # Manually load our check Error button
         self.API.addToolbarOptions(self.editToolBar.service_layout)
 
