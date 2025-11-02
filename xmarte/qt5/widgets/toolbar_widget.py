@@ -103,52 +103,7 @@ class EditToolbarWidget(QToolBar):
         our nodes in a sensible fashion based on their linkage which subsequently
         demands their execution order.
         """
-        # Get the scene viewport for the user
-        viewportRect = QRect(
-            0,
-            0,
-            self.parent.editor.view.viewport().width(),
-            self.parent.editor.view.viewport().height(),
-        )
-        visibleSceneRect = QRectF(
-            self.parent.editor.view.mapToScene(viewportRect).boundingRect()
-        )
-        # Get the coords of each visible corner of the viewport in reference
-        # to the scene.
-        left = visibleSceneRect.left()
-        top = visibleSceneRect.top()
-        bottom = visibleSceneRect.bottom()
-
-        # Figure out a good starting point
-        left = 0 if left < 0 else left
-        top = 0 if top < 0 else top
-        x = 300 + left
-        y = ((top - bottom) / 2) + bottom
-
-        # Figure out the largest width of a node to avoid overlapping
-        # nodes in the offset
-        largest_width = 0
-        largest_height = 0
-
-        for node in self.parent.scene.nodes:
-            largest_width = max(largest_width, node.grNode.width)
-            largest_height = max(largest_height, node.grNode.height)
-
-        y = y + largest_height
-
-        offsets = [largest_width + 100, largest_height + 50]
-        starting_position = [x, y]
-        # Check whether this was clean all or just clean a selected set of nodes
-        selected_items = self.parent.scene.getSelectedItems()
-        selected_nodes = [a for a in selected_items if isinstance(a, BlockGraphicsNode)]
-
-        if len(selected_nodes) > 0:
-            nodes = [a.node for a in selected_nodes]
-        else:
-            nodes = NodeHandler.getRealNodes(self.parent.scene.nodes)
-
-        # Now we're ready, clean!
-        NodeHandler.repositionSpecificNodes(nodes, offsets, starting_position)
+        self.parent.API.cleanDiagram(self.parent.scene, self.parent.editor.view)
 
     def clear(self):
         '''CLear the current design'''
