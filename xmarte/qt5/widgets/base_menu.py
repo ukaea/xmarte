@@ -165,7 +165,12 @@ class BaseFileMenu:
                 )
             self.parent.scene.clear()
             try:
-                file_handler.loadFile(filename)
+                try:
+                    file_handler.loadFile(filename)
+                except IndexError as e:
+                    # Try again
+                    self.parent.scene.clear()
+                    file_handler.loadFile(filename)
 
                 self.parent.scene.large_import = False
                 self.parent.scene.has_been_modified = True
