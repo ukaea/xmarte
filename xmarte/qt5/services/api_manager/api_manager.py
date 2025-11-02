@@ -469,6 +469,8 @@ class APIManager(Service):
                 for edges in node.comment_edges:
                     edges.update_position()
 
+        scene.zoom_to_fit_scene(view)
+
     def errorCheck(self, application, showdialog=False):
         ''' Check the given application instance for errors and show to the user '''
         # Check for errors, this could be:

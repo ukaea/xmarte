@@ -187,7 +187,7 @@ class BaseFileMenu:
                 QMessageBox.critical(
                     self.parent, 'Error during import of .cfg', str(e), QMessageBox.Ok
                 )
-
+            self.parent.API.cleanDiagram(self.parent.scene, self.parent.editor.view)
             QApplication.restoreOverrideCursor()
 
     def exportfile(self):

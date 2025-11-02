@@ -3,6 +3,7 @@ The Application Scene Component
 '''
 
 from PyQt5.QtGui import QTransform
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QGraphicsRectItem, QGraphicsTextItem
 
 from martepy.marte2.generic_application import MARTe2Application
@@ -159,3 +160,23 @@ class EditorScene(BaseScene):
                 self.modifiedListeners()
 
         # self._has_been_modified = False
+
+    def zoom_to_fit_scene(self, view, margin=20):
+        """
+        Adjust the view's transform and position to fit all items in the scene.
+
+        :param view: QGraphicsView instance
+        :param margin: extra space around the items (in scene coordinates)
+        """
+        scene = self.grScene
+        if scene is None:
+            return
+
+        # Get bounding rect of all items in the scene
+        rect = scene.itemsBoundingRect()  # bounding rectangle of all items
+
+        # Optionally expand a bit for margin
+        rect.adjust(-margin, -margin, margin, margin)
+
+        # Fit the rectangle into the view (preserving aspect ratio)
+        view.fitInView(rect, mode=Qt.KeepAspectRatio)
