@@ -95,6 +95,9 @@ class XMARTeScene(Scene):
         while len(self.nodes) > 0:
             self.nodes[0].remove()
 
+        while len(self.comments) > 0:
+            self.comments[0].delete()
+
         self.has_been_modified = True
         
     def saveToFile(self, filename: str):

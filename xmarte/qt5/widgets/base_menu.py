@@ -6,8 +6,8 @@ import re
 
 from typing import Union
 
-from PyQt5.QtWidgets import QMenu, QAction, QToolBar, QFileDialog, QMessageBox
-from PyQt5.QtCore import QSize
+from PyQt5.QtWidgets import QMenu, QAction, QToolBar, QFileDialog, QMessageBox, QApplication
+from PyQt5.QtCore import QSize, Qt
 
 from xmarte.qt5.libraries.functions import updateDefaultDialogDir
 from xmarte.qt5.plugins.base_plugin import PluginException
@@ -35,6 +35,7 @@ class BaseFileMenu:
     def newFile(self):
         ''' Clear the current Scene and reset Split View '''
         # Reset App Def
+        QApplication.setOverrideCursor(Qt.WaitCursor)
         app_def = self.parent.API.getServiceByName('ApplicationDefinition')
         app_def.resetDefaults()
         app_def.loadConfig(app_def.configuration)
@@ -67,6 +68,7 @@ class BaseFileMenu:
         # Reset message definition
         app_def.http_messages = []
         self.parent.API.getServiceByName('DataManager').clearData()
+        QApplication.restoreOverrideCursor()
 
     def createFilemenu(self, file_menu: Union[QMenu, QToolBar]):
         ''' Setup the generic file menu items '''
@@ -121,7 +123,7 @@ class BaseFileMenu:
                 # return code 16384 = "Yes"
                 if ret == QMessageBox.Yes:
                     filename = filename.split('.', maxsplit=1)[0] + f".{ext}"
-
+            QApplication.setOverrideCursor(Qt.WaitCursor)
             # Now save to file in our new format
             self.parent.API.saveToFile(filename)
 
@@ -131,6 +133,7 @@ class BaseFileMenu:
             self.parent.settings["GeneralPanel"]["file_location"] = os.path.dirname(filename)
             # Save new default directory
             updateDefaultDialogDir(os.path.dirname(filename))
+            QApplication.restoreOverrideCursor()
 
     def importfile(self):
         """Making this more so it's a plugin based system"""
@@ -163,6 +166,7 @@ class BaseFileMenu:
                 raise PluginException(
                     "No plugin found to load selected file type, an error has occurred"
                 )
+            QApplication.setOverrideCursor(Qt.WaitCursor)
             self.parent.scene.clear()
             try:
                 try:
@@ -183,6 +187,8 @@ class BaseFileMenu:
                 QMessageBox.critical(
                     self.parent, 'Error during import of .cfg', str(e), QMessageBox.Ok
                 )
+
+            QApplication.restoreOverrideCursor()
 
     def exportfile(self):
         ''' Export to file '''
@@ -227,6 +233,7 @@ class BaseFileMenu:
                     file_extension = filter_extension.strip('*')
             split_tup[1] = file_extension
             filename = tuple(split_tup)
+            QApplication.setOverrideCursor(Qt.WaitCursor)
             def getExt(a):
                 return a.getFileExtension().strip('*')
             file_handler = next(
@@ -244,6 +251,7 @@ class BaseFileMenu:
             config_manager = next(
                 a for a in self.parent.services if a.__class__.__name__ == "ConfigManager")
             config_manager.saveSettings(self.parent.settings)
+            QApplication.restoreOverrideCursor()
 
     def openFile(self):
         ''' Open a file '''
@@ -260,6 +268,7 @@ class BaseFileMenu:
             self, "Open file", default_dir, file_filter + ";;All files (*)"
         )  # Options separated by ;;
         if filename:
+            QApplication.setOverrideCursor(Qt.WaitCursor)
             prev = self.parent.scene.large_import
             self.parent.scene.large_import = True
 
@@ -270,3 +279,4 @@ class BaseFileMenu:
 
             self.parent.settings["GeneralPanel"]["file_location"] = os.path.dirname(filename)
             updateDefaultDialogDir(os.path.dirname(filename))
+            QApplication.restoreOverrideCursor()

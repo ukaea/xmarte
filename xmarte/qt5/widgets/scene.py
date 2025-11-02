@@ -3,6 +3,7 @@ The Application Scene Component
 '''
 
 from PyQt5.QtGui import QTransform
+from PyQt5.QtWidgets import QGraphicsRectItem, QGraphicsTextItem
 
 from martepy.marte2.generic_application import MARTe2Application
 
@@ -10,6 +11,7 @@ from nodeeditor.node_graphics_scene import QDMGraphicsScene
 
 from xmarte.qt5.nodes.node_factory import Factory
 from xmarte.qt5.widgets.base_scene import BaseScene
+from xmarte.qt5.widgets.comments import CommentEdge, CommentItem
 
 factory = Factory()
 factory.loadRemote()
@@ -18,7 +20,7 @@ class EditorQGraphicsScene(QDMGraphicsScene):
     ''' The primary scene user, overrides the moude press so as to automatically
     close the parameterbar if open when you click anywhere in the scene '''
     def mousePressEvent(self, event):
-        ''' overrides the moude press so as to automatically
+        ''' overrides the mouse press so as to automatically
         close the parameterbar if open when you click anywhere in the scene '''
         # print(f"Scene clicked at: {event.scenePos()}")
         clicked_item = self.itemAt(event.scenePos(), QTransform())
@@ -33,6 +35,29 @@ class EditorQGraphicsScene(QDMGraphicsScene):
                     self.changed = False
         # Optionally call base class to allow default behavior
         super().mousePressEvent(event)
+
+    def create_comment_edge(self, comment_item, pin):
+        edge = CommentEdge(start_item=pin)
+        self.addItem(edge)
+        if not hasattr(self, "comments"):
+            self.comments = []
+        self.comments.append(edge)
+        return edge
+
+    def mouseDoubleClickEvent(self, event):
+        clicked_item = self.itemAt(event.scenePos(), self.views()[0].transform())
+
+        if clicked_item is None:
+            comment = CommentItem(event.scenePos(), "New Comment")
+            self.addItem(comment)
+            self.scene.comments.append(comment)
+        else:
+            if isinstance(clicked_item, QGraphicsTextItem):
+                if hasattr(clicked_item, "comment"):
+                    pass
+            print(f"Double-clicked on item: {clicked_item}")
+
+        super().mouseDoubleClickEvent(event)  # let items handle it too, if needed
 
 class EditorScene(BaseScene):
     '''
@@ -54,6 +79,8 @@ class EditorScene(BaseScene):
         self.changingSubNode = False
         self.large_import = False
         self.application = MARTe2Application()
+        self.comments = []
+        self.comment_edges = []
 
         super().__init__(application)
         self.scene_name = scene_name

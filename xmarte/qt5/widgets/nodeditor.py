@@ -15,6 +15,7 @@ from xmarte.nodeeditor.node_graphics_node import XMARTeQDMGraphicsNode
 from xmarte.nodeeditor.node_edge import XMARTeEdge
 from xmarte.nodeeditor.node_graphics_view import XMARTeQDMGraphicsView
 from xmarte.nodeeditor.node_editor_widget import XMARTeNodeEditorWidget
+from xmarte.qt5.widgets.comments import CommentItem
 
 class EditorGRView(XMARTeQDMGraphicsView):
     '''
@@ -164,7 +165,8 @@ class EditorGRView(XMARTeQDMGraphicsView):
                 self.scene().scene.nodes = [
                     a for a in self.scene().scene.nodes if a is not item.node
                 ]
-
+            elif isinstance(item, CommentItem):
+                item.delete()
         self.scene().scene.history.storeHistory("Delete selected", setModified=True)
 
 

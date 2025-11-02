@@ -8,6 +8,7 @@ from qtpy.QtWidgets import (
     QWidget,
     QVBoxLayout,
     QMenu,
+    QGraphicsItem,
 )
 from qtpy.QtGui import QColor, QPen, QPainterPath
 from qtpy.QtCore import Qt, QRect, QRectF

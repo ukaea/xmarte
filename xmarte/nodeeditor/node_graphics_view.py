@@ -32,7 +32,7 @@ class XMARTeQDMGraphicsView(QDMGraphicsView):
         self.dragging = XMARTeEdgeDragging(self)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
-        
+
     def keyPressEvent(self, event: QKeyEvent):
         """
         .. note::

@@ -9,6 +9,7 @@ from nodeeditor.node_edge import EDGE_TYPE_DEFAULT
 
 from xmarte.nodeeditor.node_scene import XMARTeScene
 from xmarte.nodeeditor.node_edge import XMARTeEdge
+from xmarte.qt5.widgets.comments import CommentItem, CommentEdge
 from xmarte.qt5.libraries.functions import PluginException
 
 class BaseScene(XMARTeScene):
@@ -20,6 +21,8 @@ class BaseScene(XMARTeScene):
         self._nodeRemoveListeners = []
         self._modifiedListeners = []
         self.application = application
+        self.comments = []
+        self.comment_edges = []
         self.version_uuid = str(uuid.uuid4())
         self.playback = False
         self.real = real
@@ -112,6 +115,12 @@ class BaseScene(XMARTeScene):
         )
         ser = super().serialize()
         ser.update(additionals)
+        if hasattr(self, 'comments'):
+            comments = [item.serialize() for item in self.comments]
+            ser['comments'] = comments
+        if hasattr(self, 'comment_edges'):
+            edges = [edge.serialize() for edge in self.comment_edges]
+            ser['comment_edges'] = edges
         return ser
 
     def nodeClassSelectorFunction(self, data):
@@ -125,6 +134,7 @@ class BaseScene(XMARTeScene):
         prev = self.large_import
         self.large_import = True
         hashmap = {}
+        comments_by_id = {}
 
         if restore_id:
             self.id = data["id"]
@@ -154,6 +164,7 @@ class BaseScene(XMARTeScene):
                     )
                     new_node.onDeserialized(node_data)
                     self.onDeserialize(new_node)
+                    comments_by_id[node_data["id"]] = new_node
                     # print("New node for", node_data['title'])
                 except (KeyError, ValueError, AssertionError) as exc:
                     raise PluginException() from exc
@@ -163,6 +174,7 @@ class BaseScene(XMARTeScene):
                     found.onDeserialized(node_data)
                     self.onDeserialize(found)
                     all_nodes.remove(found)
+                    comments_by_id[node_data["id"]] = found
                     # print("Reused", node_data['title'])
                 except (KeyError, ValueError, AssertionError) as exc:
                     raise PluginException() from exc
@@ -206,6 +218,23 @@ class BaseScene(XMARTeScene):
         # We should move the deserialisers to the end so that our hashmap is pre-defined
         for v in self.deserialisers.values():
             v(self, data, hashmap, restore_id, args, kwargs)
+
+        # Recreate comments
+        if 'comments' in data:
+            for cdata in data['comments']:
+                comment = CommentItem.deserialize(cdata)
+                self.grScene.addItem(comment)
+                self.comments.append(comment)
+                comments_by_id[cdata['id']] = comment
+
+        # Recreate edges
+        if 'comment_edges' in data:
+            for edata in data['comment_edges']:
+                edge = CommentEdge.deserialize(edata, comments_by_id)
+                if edge:
+                    self.grScene.addItem(edge)
+                    self.comment_edges.append(edge)
+                    edge.update_position()
 
         self.large_import = prev
         return True

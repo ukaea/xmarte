@@ -127,6 +127,9 @@ class MARTe2Node(UniversalNodeFeatures):
         if hasattr(self.scene, 'nodeRemovedListeners'):
             self.scene.nodeRemovedListeners(self)
 
+        if hasattr(self, 'comment_edges'):
+            for i in self.comment_edges:
+                i.delete()
         super().remove()
 
     def initSettings(self):
@@ -474,6 +477,7 @@ class MARTe2Node(UniversalNodeFeatures):
             self.grNode.adjustTitleSize()
             self.updateSocketPositions()
             self.content.updateDim()
+            self.setPos(data['pos_x'],data['pos_y'])
         return res
 
 

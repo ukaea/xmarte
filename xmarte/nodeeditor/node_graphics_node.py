@@ -30,6 +30,9 @@ class XMARTeQDMGraphicsNode(QDMGraphicsNode):
             # now we want to skip storing selection
             return
 
+        if hasattr(self.node, 'comment_edges'):
+            for i in self.node.comment_edges:
+                i.update_position()
         # handle when grNode was clicked on
         if self._last_selected_state != self.isSelected() or self.node.scene._last_selected_items != self.node.scene.getSelectedItems():
             self.node.scene.resetLastSelectedStates()
@@ -46,4 +49,13 @@ class XMARTeQDMGraphicsNode(QDMGraphicsNode):
         self.grContent = self.node.scene.grScene.addWidget(self.content)
         self.grContent.node = self.node
         self.grContent.setParentItem(self)
+
+    def mouseMoveEvent(self, event):
+        """Overridden event to detect that we moved with this `Node`"""
+        super().mouseMoveEvent(event)
+
+        if hasattr(self.node, 'comment_edges'):
+            for i in self.node.comment_edges:
+                i.update_position()
+
         

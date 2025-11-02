@@ -380,7 +380,14 @@ class APIManager(Service):
             return
 
         file_support_service.upconvert(file_path, version, mfactory)
+        scenes = self.application.state_scenes
+        # Move 'Error' to the end
+        if 'Error' in scenes:
+            error = scenes['Error']
+            scenes = {k: v for k, v in scenes.items() if k != 'Error'}  # keep everything except 'Error'
+            scenes['Error'] = error
 
+        self.application.state_scenes = scenes
         state_service.populateCombos(self.application.state_scenes)
         try:
             state_service.thread_wdgt.currentIndexChanged.disconnect()
@@ -394,12 +401,12 @@ class APIManager(Service):
         app = self.application.API.buildApplication()
         self.application.API.errorCheck(app)
         # Now clean diagrams
-        for i, (state_name, state) in enumerate(self.application.state_scenes.items()):
-            for j, (thread_name, thread) in enumerate(state.items()):
-                self.application.API.cleanDiagram(thread, self.application.editor.view)
-                if thread.nodes:
-                    state_service.thread_wdgt.setCurrentIndex(i + j + 1)
-                    state_service.updateScene(state_name, thread_name)
+        # for i, (state_name, state) in enumerate(self.application.state_scenes.items()):
+        #     for j, (thread_name, thread) in enumerate(state.items()):
+        #         self.application.API.cleanDiagram(thread, self.application.editor.view)
+        #         if thread.nodes:
+        #             state_service.thread_wdgt.setCurrentIndex(i + j + 1)
+        #             state_service.updateScene(state_name, thread_name)
 
         # Reset playback
         state_service.changeThread(None)
@@ -457,6 +464,10 @@ class APIManager(Service):
 
         # Now we're ready, clean!
         NodeHandler.repositionSpecificNodes(nodes, offsets, starting_position)
+        for node in nodes:
+            if hasattr(node, 'comment_edges'):
+                for edges in node.comment_edges:
+                    edges.update_position()
 
     def errorCheck(self, application, showdialog=False):
         ''' Check the given application instance for errors and show to the user '''
