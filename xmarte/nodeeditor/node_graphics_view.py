@@ -32,6 +32,8 @@ class XMARTeQDMGraphicsView(QDMGraphicsView):
         self.dragging = XMARTeEdgeDragging(self)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+        self.clamped = False
+        self.zoomInFactor = 1.25  # zoom speed
 
     def keyPressEvent(self, event: QKeyEvent):
         """
@@ -72,3 +74,13 @@ class XMARTeQDMGraphicsView(QDMGraphicsView):
         # else:
         super().keyPressEvent(event)
 
+
+    def wheelEvent(self, event):
+        """overridden Qt's ``wheelEvent``. This handles zooming"""
+        # Positive delta = zoom in, negative = zoom out
+        if event.angleDelta().y() > 0:
+            zoomFactor = self.zoomInFactor
+        else:
+            zoomFactor = 1 / self.zoomInFactor
+
+        self.scale(zoomFactor, zoomFactor)
