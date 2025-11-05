@@ -60,6 +60,8 @@ class ViewerScene(XMARTeScene):
         self.large_import = False
         # current filename assigned to this scene
         self.filename = None
+        self.comments = []
+        self.comment_edges = []
 
         self.scene_width = 400
         self.scene_height = 400
