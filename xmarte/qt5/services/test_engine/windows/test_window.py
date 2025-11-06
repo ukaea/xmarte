@@ -2,6 +2,7 @@
 This Window executes whatever test executor is loaded in by the plugins and chosen in Advanced
 Options.
 '''
+import copy
 from functools import partial
 import json
 import os
@@ -22,10 +23,12 @@ from PyQt5.QtCore import pyqtSignal
 
 
 from martepy.frameworks.simulation_frameworkv2 import SimulationGenerator
+from martepy.functions.gam_functions import getDatasource
+from martepy.marte2.datasources.rt_syncbridge import Synchronisation
 from martepy.marte2.qt_classes import PanelledListConfig
 from martepy.marte2.type_database import TypeException
 from martepy.functions.extra_functions import getname
-from martepy.marte2.datasources import TimingDataSource, GAMDataSource
+from martepy.marte2.datasources import AsyncBridge, TimingDataSource, GAMDataSource
 from martepy.marte2.datasource import MARTe2DataSource
 
 from xmarte.qt5.libraries.functions import fixSocketOrdering, updateDefaultDialogDir
@@ -367,6 +370,31 @@ class TestWindow(ModalOptionsWindow): # pylint: disable=R0904
             if isinstance(datasource, TimingDataSource):
                 continue
             node = self.application.API.toNode(datasource, scene)
+            # Since we created the simulation from app, where our datasources lose
+            # their input output signal definitions, we need to rebuild this.
+            if isinstance(datasource, (Synchronisation, AsyncBridge)):
+                # Figure out whether it is an input or an output by looking for
+                # any signals referring to it
+                datasource.output_signals = [] # Reset from previous threads
+                datasource.input_signals = []
+                node.parameters['input'] = False
+                for function in thread.functions:
+                    for inputs in function.inputs:
+                        if getDatasource(inputs) == datasource.configuration_name.lstrip('+'):
+                            # Is an input
+                            node.parameters['input'] = False
+                            # Add the input signal
+                            new_signal = copy.deepcopy(inputs)
+                            del new_signal[1]['MARTeConfig']['DataSource']
+                            datasource.output_signals += [new_signal]
+                    for outputs in function.outputs:
+                        if getDatasource(outputs) == datasource.configuration_name.lstrip('+'):
+                            # Is an input
+                            node.parameters['input'] = True
+                            # Add the input signal
+                            new_signal = copy.deepcopy(outputs)
+                            del new_signal[1]['MARTeConfig']['DataSource']
+                            datasource.input_signals += [new_signal]
             if hasattr(datasource, 'input_signals'):
                 inputs = [(0, a[0]) for a in datasource.input_signals]
                 node.inputsb = datasource.input_signals
@@ -379,7 +407,7 @@ class TestWindow(ModalOptionsWindow): # pylint: disable=R0904
                 outputs = []
             node.initSockets(inputs, outputs)
             fixSocketOrdering(node)
-            node.grNode.adjustTitleSize()
+            node.grNode.adjustTitleSize()  
         self.application.API.autolink(scene)
         self.application.API.cleanDiagram(scene, self.editor.view)
         scene.large_import = prev
