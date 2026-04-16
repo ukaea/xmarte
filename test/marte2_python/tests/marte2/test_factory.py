@@ -18,7 +18,7 @@ def test_factory():
                                 'WaveformSinGAM': WaveformSinGAM, 'WaveformGAM::WaveformChirp': WaveformChirpGAM,
                                 'WaveformChirp': WaveformChirpGAM, 'WaveformChirpGAM': WaveformChirpGAM,
                                 'WaveformGAM::WaveformPointsDef': WaveformPointsGAM, 'WaveformPointsDef': WaveformPointsGAM,
-                                'WaveformPointsGAM': WaveformPointsGAM, 'PIDGAM': PIDGAM, 'FilterGAM': FilterGAM}
+                                'WaveformPointsGAM': WaveformPointsGAM, 'PIDGAM': PIDGAM, 'FilterGAM': FilterGAM, 'HistogramGAM': HistogramGAM, 'StatisticsGAM' : StatisticsGAM}
 
     assert test_obj.classes == classes
 

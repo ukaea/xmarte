@@ -54,7 +54,7 @@ def parseFile(file_path):
     return content
 
 
-def buildTree(content):
+def buildTree(content): #pylint: disable=R0912
     ''' Read a text content and parse it into TreeNode classes for later interpretation '''
     root = TreeNode('root')
     current_node = root
@@ -65,6 +65,9 @@ def buildTree(content):
     key = ''
     for line in lines:
         stripped_line = line.lstrip(' ')
+        stripped_line = stripped_line.split("//", 1)[0]
+        if not stripped_line.strip():
+            continue
         if building:
             current_line += stripped_line
             if not stripped_line.strip().endswith('\\n'):
