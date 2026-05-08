@@ -158,7 +158,12 @@ class MARTe2GUIPlugin(GUIPlugin):
         '''
         sending_button = self.application.sender()
         name = str(sending_button.objectName())
-        _ = self.createDatasource(name)
+        datasource = self.createDatasource(name)
+        confname = self.generateUniqueName(datasource.configuration_name, datasource)
+        datasource.configuration_name = confname
+        datasource.title = confname + "(" + datasource.btype + ")"
+        datasource.grNode.title = datasource.title
+        datasource.grNode.adjustLabelSizes()
 
     def createDatasource(self, name):
         ''' create a node given it's datasource name '''
