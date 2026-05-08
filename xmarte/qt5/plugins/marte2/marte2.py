@@ -173,8 +173,31 @@ class MARTe2GUIPlugin(GUIPlugin):
         '''
         sending_button = self.application.sender()
         name = str(sending_button.objectName())
-        _ = self.createNode(name)
+        # Generate a unique name for it
+        node = self.createNode(name)
+        confname = self.generateUniqueName(node.configuration_name, node)
+        node.configuration_name = confname
+        node.title = confname + "(" + node.parameters['Class name'] + ")"
+        node.grNode.title = node.title
+        node.grNode.adjustLabelSizes()
 
+    def generateUniqueName(self, name, new_node):
+        ''' Generate a unique name for a GAM '''
+        existing_names = []
+        for state_name, state in self.application.state_scenes.items():
+            for thread_name, thread in state.items():
+                for node in thread.nodes:
+                    if not(id(node) == id(new_node)):
+                        existing_names += [node.configuration_name]
+        if name in existing_names:
+            num = 1
+            while(True):
+                if name + str(num) not in existing_names:
+                    return name + str(num)
+                else:
+                    num = num + 1
+        return name
+                
     def createNode(self, name):
         ''' create a node given it's block name '''
         block_class = self.factory.create(name)
