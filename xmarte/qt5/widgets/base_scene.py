@@ -127,7 +127,7 @@ class BaseScene(XMARTeScene):
         ''' Use application's factory as node classifier '''
         return self.application.factories.create(data["type"])
 
-    def deserialize( # pylint:disable=W1113, R0914, R0912
+    def deserialize( # pylint:disable=W1113, R0914, R0912, R0915
         self, data: dict, hashmap: dict = {}, restore_id: bool = True, *args, **kwargs
     ) -> bool:
         ''' Deserialise and override to include UUID '''
@@ -234,7 +234,7 @@ class BaseScene(XMARTeScene):
                 if edge:
                     self.grScene.addItem(edge)
                     self.comment_edges.append(edge)
-                    edge.update_position()
+                    edge.updatePosition()
 
         self.large_import = prev
         return True

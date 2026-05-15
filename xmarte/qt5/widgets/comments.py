@@ -1,24 +1,24 @@
-﻿from PyQt5.QtWidgets import (
-    QApplication, QGraphicsPathItem, QGraphicsProxyWidget, QGraphicsScene, QGraphicsView, 
+﻿''' Adds a comment to the scene when double clicked for easier reading '''
+import math
+
+from PyQt5.QtWidgets import (
+    QGraphicsProxyWidget, QGraphicsLineItem,
     QGraphicsRectItem, QGraphicsTextItem, QGraphicsPolygonItem
 )
-from PyQt5.QtGui import QPainterPath, QPen, QBrush, QColor, QPolygonF, QCursor
-from PyQt5.QtCore import Qt, QPointF, QRectF, QSizeF, pyqtSignal
-import sys, math, json
-
-from PyQt5.QtWidgets import QGraphicsRectItem, QGraphicsTextItem, QGraphicsPolygonItem, QGraphicsLineItem
 from PyQt5.QtGui import QPen, QBrush, QColor, QPolygonF
-from PyQt5.QtCore import Qt, QPointF, QRectF, QLineF
+from PyQt5.QtCore import Qt, QPointF, QLineF
 
 from xmarte.nodeeditor.node_graphics_edge import XMARTeQDMGraphicsEdge
 from xmarte.qt5.nodes.node_graphics import BlockGraphicsNode
 from xmarte.qt5.nodes.marte2_node import MARTe2Node
 from xmarte.nodeeditor.node_edge import XMARTeEdge
 
-def point_to_dict(p: QPointF):
+def pointToDict(p: QPointF):
+    ''' Get dictionary from point '''
     return {'x': p.x(), 'y': p.y()}
 
-def point_from_dict(d):
+def pointFromDict(d):
+    ''' Get point from dictionary '''
     return QPointF(d['x'], d['y'])
 
 # ---------- CommentEdge ----------
@@ -29,17 +29,18 @@ class CommentEdge(QGraphicsLineItem):
         self.start_pin = start_pin
         self.start_pin.temp_edge = self
         self.end_item = end_item
-        self.set_end_item(end_item)
+        self.setEndItem(end_item)
         self.end_pos = end_pos
         self.setPen(QPen(QColor(255, 255, 255), 2))
         self.setZValue(-1)
         self.setFlags(
-            QGraphicsLineItem.ItemIsSelectable | 
+            QGraphicsLineItem.ItemIsSelectable |
             QGraphicsLineItem.ItemIsFocusable
         )
-        self.update_position()
+        self.updatePosition()
 
-    def _register_with_items(self):
+    def _registerWithItems(self):
+        ''' Connect our edge from comment to item '''
         # Ensure start item (comment) knows about this edge
         try:
             comment = self.start_pin.parent_comment
@@ -47,7 +48,7 @@ class CommentEdge(QGraphicsLineItem):
                 comment.edges = []
             if self not in comment.edges:
                 comment.edges.append(self)
-        except Exception:
+        except IndexError:
             pass
 
         # If end_item exists, register it too
@@ -57,29 +58,31 @@ class CommentEdge(QGraphicsLineItem):
             if self not in self.end_item.node.comment_edges:
                 self.end_item.node.comment_edges.append(self)
 
-    def _unregister_from_items(self):
+    def _unregisterFromItems(self):
+        ''' Disconnect our comment from an item '''
         try:
             comment = self.start_pin.parent_comment
             if hasattr(comment, 'edges') and self in comment.edges:
                 comment.edges.remove(self)
-        except Exception:
+        except IndexError:
             pass
 
         if self.end_item is not None:
             try:
                 if hasattr(self.end_item, 'comment_edges') and self in self.end_item.comment_edges:
                     self.end_item.comment_edges.remove(self)
-            except Exception:
+            except IndexError:
                 pass
 
-    def set_end_item(self, item):
+    def setEndItem(self, item):
+        ''' Set the end item we point to '''
         # unregister from old end_item and register to new one
         if self.end_item is not None:
 
             try:
                 if hasattr(self.end_item, 'comment_edges') and self in self.end_item.comment_edges:
                     self.end_item.comment_edges.remove(self)
-            except Exception:
+            except IndexError:
                 pass
         self.end_item = item
         self.end_pos = None
@@ -92,22 +95,23 @@ class CommentEdge(QGraphicsLineItem):
                 item.comment_edges = []
             if self not in item.comment_edges:
                 item.comment_edges.append(self)
-        self.update_position()
+        self.updatePosition()
 
-    def set_end_pos(self, pos):
+    def setEndPos(self, pos):
+        ''' Clip to the end item '''
         # used during dragging
         self.end_pos = pos
         self.end_item = None
-        self.update_position()
+        self.updatePosition()
 
 
-    def update_position(self):
+    def updatePosition(self):
         """Compute start and end in scene coords and set the line.
            Safely handles when end_item is None (dragging) or when it exists.
            The end point is shortened to sit on the border of the target item.
         """
         # compute start in scene coords
-        start = self.start_pin.mapToScene(self.start_pin.pin_center())
+        start = self.start_pin.mapToScene(self.start_pin.pinCenter())
 
         # choose end
         if self.end_item is not None:
@@ -116,10 +120,10 @@ class CommentEdge(QGraphicsLineItem):
             try:
                 b = self.end_item.boundingRect()
                 candidate_end = self.end_item.mapToScene(b.center())
-            except Exception:
+            except IndexError:
                 candidate_end = start
             # Now shorten the line so it stops on the border of the end_item
-            end = self._point_on_item_border(self.end_item, start, candidate_end)
+            end = self._pointOnItemBorder(self.end_item, start, candidate_end)
         elif self.end_pos is not None:
             end = self.end_pos
         else:
@@ -131,7 +135,7 @@ class CommentEdge(QGraphicsLineItem):
 
         self.setLine(QLineF(start, end))
 
-    def _point_on_item_border(self, item, p_from: QPointF, p_to: QPointF) -> QPointF:
+    def _pointOnItemBorder(self, item, p_from: QPointF, p_to: QPointF) -> QPointF:
         """Return the intersection between the line (p_from->p_to) and the
            item's boundingRect mapped into scene coords. If none found,
            return p_to shortened by a small margin.
@@ -168,13 +172,14 @@ class CommentEdge(QGraphicsLineItem):
         return p_to
 
     def keyPressEvent(self, event):
+        ''' Delete if requested to do so '''
         if event.key() == Qt.Key_Delete:
             self.delete()
             return  # don’t propagate
-        else:
-            super().keyPressEvent(event)
-        
-    def paint(self, painter, option, widget=None):
+        super().keyPressEvent(event)
+
+    def paint(self, painter, option, widget=None): # pylint: disable=W0613
+        ''' Paint the edge line '''
         # draw main line
         painter.setPen(self.pen())
         painter.drawLine(self.line())
@@ -210,19 +215,23 @@ class CommentEdge(QGraphicsLineItem):
             painter.drawLine(self.line())
 
     def delete(self):
-        s = self.scene().scene
-        if s and hasattr(s, "comment_edges"):
-            s.comment_edges = [e for e in s.comment_edges if e is not self]
-        self._unregister_from_items()
+        ''' Delete self '''
+        if self.scene():
+            s = self.scene().scene
+            if s and hasattr(s, "comment_edges"):
+                s.comment_edges = [e for e in s.comment_edges if e is not self]
+        self._unregisterFromItems()
         if self.scene():
             self.scene().removeItem(self)
         del self
 
     def remove(self):
+        ''' Same as delete self '''
         self.delete()
 
     def serialize(self):
         """Serialize the edge as a dict with references to start/end comments."""
+        end_id = None
         if isinstance(self.end_item, BlockGraphicsNode):
             end_id = self.end_item.node.serialize()['id']
         elif isinstance(self.end_item, XMARTeQDMGraphicsEdge):
@@ -230,7 +239,7 @@ class CommentEdge(QGraphicsLineItem):
         data = {
             'start_id': id(self.start_pin.parent_comment),
             'end_id': end_id if self.end_item else None,
-            'end_pos': point_to_dict(self.end_pos) if self.end_pos else None
+            'end_pos': pointToDict(self.end_pos) if self.end_pos else None
         }
         return data
 
@@ -248,7 +257,7 @@ class CommentEdge(QGraphicsLineItem):
                 end_item = end_item.grNode
             elif isinstance(end_item, XMARTeEdge):
                 end_item = end_item.grEdge
-        #end_pos = point_from_dict(data['end_pos']) if data['end_pos'] else None
+        #end_pos = pointFromDict(data['end_pos']) if data['end_pos'] else None
         end_pos = None
         edge = CommentEdge(start_pin, end_item=end_item, end_pos=end_pos)
         return edge
@@ -268,11 +277,13 @@ class CommentPin(QGraphicsPolygonItem):
         self.dragging = False
         self.temp_edge = None  # CommentEdge used while dragging (keeps persistent if released)
 
-    def pin_center(self):
+    def pinCenter(self):
+        ''' Pin our edge to center '''
         r = self.boundingRect()
         return QPointF(r.center().x(), r.center().y())
 
     def mousePressEvent(self, event):
+        ''' User has pressed, begin dragging '''
         # begin dragging => create an edge starting from this pin
         self.setCursor(Qt.ClosedHandCursor)
         self.dragging = True
@@ -289,15 +300,17 @@ class CommentPin(QGraphicsPolygonItem):
         event.accept()
 
     def mouseMoveEvent(self, event):
+        ''' Being dragged maybe '''
         if not self.dragging or not self.temp_edge:
             event.ignore()
             return
         # update edge end to current mouse position
         scene_pos = self.mapToScene(event.pos())
-        self.temp_edge.set_end_pos(scene_pos)
+        self.temp_edge.setEndPos(scene_pos)
         event.accept()
 
     def mouseReleaseEvent(self, event):
+        ''' Mouse release - clip to an item with the edge if possible '''
         if not self.dragging or not self.temp_edge:
             event.ignore()
             return
@@ -313,12 +326,12 @@ class CommentPin(QGraphicsPolygonItem):
         else:
             if not target is self.temp_edge:
                 # pin to the item (store the item)
-                self.temp_edge.set_end_item(target)
+                self.temp_edge.setEndItem(target)
             else:
                 self.temp_edge.delete()
 
         # ensure edge updates when items move (we'll rely on notifications from itemChange)
-        self.temp_edge.update_position()
+        self.temp_edge.updatePosition()
         event.accept()
 
 # ---------- CommentItem ----------
@@ -340,14 +353,14 @@ class CommentItem(QGraphicsRectItem):
         self.text_item.setDefaultTextColor(Qt.black)
         self.text_item.setTextInteractionFlags(Qt.TextEditorInteraction)
         # connect text changes to resize
-        self.text_item.document().contentsChanged.connect(self.adjust_size_to_text)
+        self.text_item.document().contentsChanged.connect(self.adjustSizeToText)
         self.text_item.comment = self
         # Pin
         self.pin = CommentPin(self)
 
         # initial layout
         self.setPos(pos)
-        self.adjust_size_to_text()
+        self.adjustSizeToText()
 
         # start in editing mode
         self.text_item.setTextInteractionFlags(Qt.TextEditorInteraction)
@@ -355,17 +368,19 @@ class CommentItem(QGraphicsRectItem):
         self.text_item.setFocus()
 
     def delete(self):
+        ''' Delete self '''
         s = self.scene().scene
         if s and hasattr(s, "comments"):
             s.comments = [e for e in s.comments if e is not self]
-        if self.has_edge():
-            e = self.get_edge()
+        if self.hasEdge():
+            e = self.getEdge()
             e.delete()
         if self.scene():
             self.scene().removeItem(self)
         del self
 
-    def has_edge(self):
+    def hasEdge(self):
+        ''' Check that we have an edge '''
         if self.scene():
             s = self.scene().scene
             if not s or not hasattr(s, "comment_edges"):
@@ -375,7 +390,8 @@ class CommentItem(QGraphicsRectItem):
                     return True
         return False
 
-    def get_edge(self):
+    def getEdge(self):
+        ''' Get our edge object '''
         if self.scene():
             s = self.scene().scene
             for e in s.comment_edges:
@@ -383,7 +399,8 @@ class CommentItem(QGraphicsRectItem):
                     return e
         return None
 
-    def adjust_size_to_text(self):
+    def adjustSizeToText(self):
+        ''' Readjust size for text '''
         tr = self.text_item.boundingRect()
         margin = 10
         w = tr.width() + margin
@@ -396,10 +413,11 @@ class CommentItem(QGraphicsRectItem):
         self.pin.setPos(self.rect().width() - self.pin.boundingRect().width()/2 + pin_offset_x,
                         self.rect().height() - self.pin.boundingRect().height()/2 + pin_offset_y)
         # update any connected edges (scene.comment_edges)
-        if self.has_edge():
-            self.get_edge().update_position()
+        if self.hasEdge():
+            self.getEdge().updatePosition()
 
     def focusOutEvent(self, event):
+        ''' User left the item so no text changes now '''
         if not self.text_item.hasFocus():
             self.text_item.setTextInteractionFlags(Qt.NoTextInteraction)
         super().focusOutEvent(event)
@@ -414,31 +432,31 @@ class CommentItem(QGraphicsRectItem):
         # If click hits text, let text handle it
         if item is self.text_item:
             return super().mouseDoubleClickEvent(event)
-    
+
         # Enable editing
         self.text_item.setTextInteractionFlags(Qt.TextEditorInteraction)
         self.text_item.setFocus()
 
-        #super().mouseDoubleClickEvent(event)
+        return None
 
     def itemChange(self, change, value):
-        # notify connected edges to update when the comment moves
+        ''' notify connected edges to update when the comment moves '''
         if change == QGraphicsRectItem.ItemPositionHasChanged:
-            if self.has_edge():
-                self.get_edge().update_position()
+            if self.hasEdge():
+                self.getEdge().updatePosition()
         return super().itemChange(change, value)
 
     def keyPressEvent(self, event):
+        ''' Check if asked to delete '''
         if event.key() == Qt.Key_Delete:
             self.delete()
             return  # don’t propagate
-        else:
-            super().keyPressEvent(event)
+        super().keyPressEvent(event)
 
     def serialize(self):
         """Return a dict with info to recreate this comment."""
         data = {
-            'pos': point_to_dict(self.pos()),
+            'pos': pointToDict(self.pos()),
             'text': self.text_item.toPlainText(),
             'id': id(self)  # use id as unique identifier for edges
         }
@@ -447,8 +465,8 @@ class CommentItem(QGraphicsRectItem):
     @staticmethod
     def deserialize(data):
         """Create CommentItem from serialized dict."""
-        pos = point_from_dict(data['pos'])
+        pos = pointFromDict(data['pos'])
         text = data['text']
         comment = CommentItem(pos, text)
-        comment._id = data.get('id', id(comment))
+        comment._id = data.get('id', id(comment)) # pylint: disable=W0212, W0201
         return comment

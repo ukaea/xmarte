@@ -4,7 +4,7 @@ The Application Scene Component
 
 from PyQt5.QtGui import QTransform
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QGraphicsRectItem, QGraphicsTextItem
+from PyQt5.QtWidgets import QGraphicsTextItem
 
 from martepy.marte2.generic_application import MARTe2Application
 
@@ -12,7 +12,7 @@ from nodeeditor.node_graphics_scene import QDMGraphicsScene
 
 from xmarte.qt5.nodes.node_factory import Factory
 from xmarte.qt5.widgets.base_scene import BaseScene
-from xmarte.qt5.widgets.comments import CommentEdge, CommentItem
+from xmarte.qt5.widgets.comments import CommentItem
 
 factory = Factory()
 factory.loadRemote()
@@ -37,15 +37,8 @@ class EditorQGraphicsScene(QDMGraphicsScene):
         # Optionally call base class to allow default behavior
         super().mousePressEvent(event)
 
-    def create_comment_edge(self, comment_item, pin):
-        edge = CommentEdge(start_item=pin)
-        self.addItem(edge)
-        if not hasattr(self, "comments"):
-            self.comments = []
-        self.comments.append(edge)
-        return edge
-
     def mouseDoubleClickEvent(self, event):
+        ''' Mouse double click listener - add a comment if not clicking on an item '''
         clicked_item = self.itemAt(event.scenePos(), self.views()[0].transform())
 
         if clicked_item is None:
@@ -161,7 +154,7 @@ class EditorScene(BaseScene):
 
         # self._has_been_modified = False
 
-    def zoom_to_fit_scene(self, view, margin=20):
+    def zoomToFitScene(self, view, margin=20):
         """
         Adjust the view's transform and position to fit all items in the scene.
 

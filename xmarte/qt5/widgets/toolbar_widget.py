@@ -11,11 +11,8 @@ from PyQt5.QtWidgets import (
     QAction,
 )
 from PyQt5 import QtCore, QtWidgets
-from qtpy.QtCore import QRect, QRectF
 
 from xmarte.qt5.widgets.base_menu import BaseFileMenu
-from xmarte.qt5.nodes.node_graphics import BlockGraphicsNode
-from xmarte.qt5.nodes.node_handler import NodeHandler
 from xmarte.qt5.nodes.node_factory import Factory
 
 factory = Factory()

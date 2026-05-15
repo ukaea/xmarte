@@ -384,7 +384,7 @@ class APIManager(Service):
         # Move 'Error' to the end
         if 'Error' in scenes:
             error = scenes['Error']
-            scenes = {k: v for k, v in scenes.items() if k != 'Error'}  # keep everything except 'Error'
+            scenes = {k: v for k, v in scenes.items() if k != 'Error'} # keep all but 'Error'
             scenes['Error'] = error
 
         self.application.state_scenes = scenes
@@ -467,9 +467,9 @@ class APIManager(Service):
         for node in nodes:
             if hasattr(node, 'comment_edges'):
                 for edges in node.comment_edges:
-                    edges.update_position()
+                    edges.updatePosition()
 
-        scene.zoom_to_fit_scene(view)
+        scene.zoomToFitScene(view)
 
     def errorCheck(self, application, showdialog=False):
         ''' Check the given application instance for errors and show to the user '''

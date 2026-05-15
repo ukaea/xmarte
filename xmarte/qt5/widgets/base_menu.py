@@ -171,7 +171,7 @@ class BaseFileMenu:
             try:
                 try:
                     file_handler.loadFile(filename)
-                except IndexError as e:
+                except IndexError as _:
                     # Try again
                     self.parent.scene.clear()
                     file_handler.loadFile(filename)

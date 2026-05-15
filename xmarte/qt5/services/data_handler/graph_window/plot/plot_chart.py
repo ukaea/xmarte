@@ -19,10 +19,6 @@ class PlotChart(QChartView):
         self.viewport().installEventFilter(self)
         self.setContentsMargins(0,0,0,0)
 
-    def eventFilter(self, obj, event):
-        '''Catch potential events in chart.'''
-        return super().eventFilter(obj, event)
-
     def mouseReleaseEvent(self, event: QtGui.QMouseEvent):
         '''All user to control time axis change.'''
         if event.button() == 2:

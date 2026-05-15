@@ -349,7 +349,7 @@ class TestWindow(ModalOptionsWindow): # pylint: disable=R0904
                 # Is a GAM
                 thread.functions.append(as_gam)
 
-    def drawScene(self, scene, thread, app_def):
+    def drawScene(self, scene, thread, app_def): # pylint:disable=R0912
         ''' Draw the selected scene '''
         # This function converts a thread definition from MARTe2Application into a scene
         prev = scene.large_import
@@ -407,7 +407,7 @@ class TestWindow(ModalOptionsWindow): # pylint: disable=R0904
                 outputs = []
             node.initSockets(inputs, outputs)
             fixSocketOrdering(node)
-            node.grNode.adjustTitleSize()  
+            node.grNode.adjustTitleSize()
         self.application.API.autolink(scene)
         self.application.API.cleanDiagram(scene, self.editor.view)
         scene.large_import = prev

@@ -39,4 +39,6 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Run pylint
-        run: pylint xmarte
+        run: |
+          pip install --upgrade martepy
+          pylint xmarte

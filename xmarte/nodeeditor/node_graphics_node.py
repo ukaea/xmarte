@@ -32,7 +32,7 @@ class XMARTeQDMGraphicsNode(QDMGraphicsNode):
 
         if hasattr(self.node, 'comment_edges'):
             for i in self.node.comment_edges:
-                i.update_position()
+                i.updatePosition()
         # handle when grNode was clicked on
         if self._last_selected_state != self.isSelected() or self.node.scene._last_selected_items != self.node.scene.getSelectedItems():
             self.node.scene.resetLastSelectedStates()
@@ -56,6 +56,6 @@ class XMARTeQDMGraphicsNode(QDMGraphicsNode):
 
         if hasattr(self.node, 'comment_edges'):
             for i in self.node.comment_edges:
-                i.update_position()
+                i.updatePosition()
 
         
