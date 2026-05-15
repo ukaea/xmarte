@@ -25,7 +25,7 @@ dependencies = [
     "pytest-mock>=3.14.0",
     "scipy>=1.13.1",
     "nodeeditor",
-    "martepy>=1.0.9"
+    "martepy>=1.1.0"
 ]
 
 [project.urls]

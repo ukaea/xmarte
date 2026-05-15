@@ -41,7 +41,7 @@ def test_factory():
 
     assert test_obj.getAll() == [ConstantGAM, ConversionGAM, ExpressionGAM, ExpressionGAM, IOGAM, MessageGAM, MuxGAM,
                                  WaveformSinGAM, WaveformSinGAM, WaveformSinGAM, WaveformChirpGAM, WaveformChirpGAM, WaveformChirpGAM,
-                                 WaveformPointsGAM, WaveformPointsGAM, WaveformPointsGAM, PIDGAM, FilterGAM, SimulinkGAM, SimulinkGAM]
+                                 WaveformPointsGAM, WaveformPointsGAM, WaveformPointsGAM, PIDGAM, FilterGAM, SimulinkGAM, SimulinkGAM, HistogramGAM, StatisticsGAM]
     
     test_obj.unloadAll()
 
