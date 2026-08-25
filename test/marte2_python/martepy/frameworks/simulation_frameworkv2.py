@@ -370,10 +370,10 @@ class SimulationGenerator():
         self.simulation_app.sanitize()
 
         self.simulation_app.removeUnused()
-        SimulinkWrapperGAMs = [function for obj in state.threads.objects for function in obj.functions if getattr(function, "class_name", None) == "SimulinkWrapperGAM" ]
+        SimulinkWrapperGAMs = [obj for obj in self.simulation_app.functions if getattr(obj, "class_name", None) == "SimulinkWrapperGAM" ]
         self.simulation_app.libraries = copy.deepcopy([obj.library for obj in SimulinkWrapperGAMs])
         for simwrapper in SimulinkWrapperGAMs:
-            simwrapper.libaries = os.path.join(self.cwd, os.path.basename(simwrapper.libraries))# TODO: set for tempfolder and .so name
+            simwrapper.library = os.path.join(self.cwd, os.path.basename(simwrapper.library))# TODO: set for tempfolder and .so name
         # Now we want to insert the internals of types we don't have in the application
         # Need to insert these into the objects part of the application so they appear
         # at the very start

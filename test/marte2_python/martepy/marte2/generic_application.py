@@ -66,6 +66,7 @@ class MARTe2Application():
         self.loggingintoio = IOGAM('+ToLogGAM',[],[])
         self.iogams = [self.logging_iogam, self.loggingintoio, self.async_to_io]
         self._internal_datasources = []
+        self.libraries = []
 
     def loadTypeLibrary(self, filepath: str):
         ''' Load type definition directory into our type database '''

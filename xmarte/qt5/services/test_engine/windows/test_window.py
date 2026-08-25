@@ -92,15 +92,14 @@ class TestWindow(ModalOptionsWindow): # pylint: disable=R0904
                 self.importDef(self.application.test_definition)
             else:
                 self.editor.scene.clear()
-                self.sim_generator = SimulationGenerator(self.marte_app_def, cwd = os.path.join(self.application.settings['RemotePanel']['temp_folder'],
-                                                "temp"))
+                self.sim_generator = SimulationGenerator(self.marte_app_def, os.path.join(self.application.settings['RemotePanel']['temp_folder'], "temp"))
                 self.sim_generator.configure(self.marte_app_def)
                 mcycles = self.tab_wgt.mcycles_edt.text()
                 self.sim_generator.simulation_app.config['maxcycles'] = mcycles
                 rate = self.tab_wgt.rate_edt.text()
                 self.sim_generator.simulation_app.config['timefrequency'] = rate
                 self.sim_app_def = self.sim_generator.build()
-                self.tab_wgt.populate_keys(self.sim_generator.simulation_app.libraries)
+                self.tab_wgt.populate_keys(self.sim_app_def.libraries)
                 self.drawNew(self.sim_app_def)
                 self.application.test_definition = self.exportDef()
 

@@ -1,7 +1,7 @@
 '''
 The left panel which contains all the blocks available to the test engine
 '''
-
+import os
 from functools import partial
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import (
@@ -17,6 +17,7 @@ from PyQt5.QtWidgets import (
     QLabel,
     QComboBox,
     QLineEdit,
+    QFileDialog,
 )
 
 from martepy.marte2.gams.constant_gam import ConstantGAM
@@ -58,6 +59,24 @@ class TestPanelWidget(QWidget):
 
         self.loadNodes()
 
+    def choose_file_for_cell(self, row, column):
+        """
+        Open a file dialogue when the user double-cliks a cell in the
+        'actual location' column.
+        """
+        if column != 1:
+            return  # only open dialogue for column 2
+
+        file_path, _ = QFileDialog.getOpenFileName(
+            self,
+            "Select File",
+            "",
+            "All Files (*)",
+        )
+
+        if file_path:
+            self.lib_table.item(row, column).setText(file_path)
+
     def populate_keys(self, keys):
         """
         Populate the table with keys in the left-hand column.
@@ -67,14 +86,14 @@ class TestPanelWidget(QWidget):
         self.lib_table.setRowCount(len(keys))
 
         for row, key in enumerate(keys):
-            key_item = QTableWidgetItem(str(key))
+            key_item = QTableWidgetItem(os.path.basename(key))
 
             # Make the left-hand column read-only
             key_item.setFlags(
                 key_item.flags() & ~Qt.ItemIsEditable
             )
 
-            self.lib_table.setItem(row, 0, os.path.basename(key_item))
+            self.lib_table.setItem(row, 0, key_item)
 
             # Create an empty editable value cell
             value_item = QTableWidgetItem("")
@@ -95,8 +114,8 @@ class TestPanelWidget(QWidget):
         self.lib_table = QTableWidget()
         self.lib_table.setColumnCount(2)
         self.lib_table.setHorizontalHeaderLabels(["Library", "Actual Location"])
-
         self.lib_table.horizontalHeader().setStretchLastSection(True)
+        self.lib_table.cellClicked.connect(self.choose_file_for_cell)
 
         layout.addWidget(self.lib_table)
 
