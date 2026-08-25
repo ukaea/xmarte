@@ -19,7 +19,7 @@ Req:
     - It will then create a AsyncBridge between the two threads to bring that 
       threads' signals into thread 0.
 """
-import copy
+import copy, os
 
 from martepy.functions.extra_functions import getname # pylint: disable=W0614
 from martepy.functions.gam_functions import (getAlias,
@@ -46,7 +46,7 @@ class SimulationGenerator():
     *** It is a highly complex set of functions as it achieves a complex task - as a result, we've
     pylint disabled a few check regarding complex code but we're not exceeding those parameters
     too much and most of these have thorough commenting in. ***'''
-    def __init__(self, app, configure=True):
+    def __init__(self, app, cwd, configure=True):
         """Initialise our simulation generator object
         """
         self.original_app = app
@@ -55,6 +55,7 @@ class SimulationGenerator():
         self.state_constant_vals = {}
         self.gam_sources = []
         self.replaced_datasources = []
+        self.cwd = cwd
         if configure:
             # Configure immediately
             self.configure()
@@ -369,7 +370,10 @@ class SimulationGenerator():
         self.simulation_app.sanitize()
 
         self.simulation_app.removeUnused()
-
+        SimulinkWrapperGAMs = [function for obj in state.threads.objects for function in obj.functions if getattr(function, "class_name", None) == "SimulinkWrapperGAM" ]
+        self.simulation_app.libraries = copy.deepcopy([obj.library for obj in SimulinkWrapperGAMs])
+        for simwrapper in SimulinkWrapperGAMs:
+            simwrapper.libaries = os.path.join(self.cwd, os.path.basename(simwrapper.libraries))# TODO: set for tempfolder and .so name
         # Now we want to insert the internals of types we don't have in the application
         # Need to insert these into the objects part of the application so they appear
         # at the very start

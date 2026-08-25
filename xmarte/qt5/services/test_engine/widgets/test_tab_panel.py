@@ -3,9 +3,12 @@ The left panel which contains all the blocks available to the test engine
 '''
 
 from functools import partial
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import (
     QGridLayout,
     QPushButton,
+    QTableWidget,
+    QTableWidgetItem,
     QWidget,
     QVBoxLayout,
     QSizePolicy,
@@ -30,6 +33,7 @@ class TestPanelWidget(QWidget):
         self.parent = parent
         self.scene = scene
         self.application = application
+        self.lib_table = None
         # Lets adjust and have a main widget which holds our tab control and
         self.tab_wgt = QTabWidget(self)
         self.setObjectName("TestPanelWidget")
@@ -41,6 +45,9 @@ class TestPanelWidget(QWidget):
         self.test_panel.setObjectName("TestPanel")
         self.populateTestPanel(self.test_panel)
         self.tab_wgt.addTab(self.test_panel, "Test Properties")
+        self.library_panel = QWidget()
+        self.library_panel.setLayout(self.create_key_value_table())
+        self.tab_wgt.addTab(self.library_panel, "Libraries")
 
         spacer = QWidget(self)
         spacer.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Expanding)
@@ -50,6 +57,82 @@ class TestPanelWidget(QWidget):
         self.setLayout(self.layout_i)
 
         self.loadNodes()
+
+    def populate_keys(self, keys):
+        """
+        Populate the table with keys in the left-hand column.
+        The key cells are read-only.
+        """
+
+        self.lib_table.setRowCount(len(keys))
+
+        for row, key in enumerate(keys):
+            key_item = QTableWidgetItem(str(key))
+
+            # Make the left-hand column read-only
+            key_item.setFlags(
+                key_item.flags() & ~Qt.ItemIsEditable
+            )
+
+            self.lib_table.setItem(row, 0, os.path.basename(key_item))
+
+            # Create an empty editable value cell
+            value_item = QTableWidgetItem("")
+            self.lib_table.setItem(row, 1, value_item)
+
+    def create_key_value_table(self):
+        """
+        Creates a 2-column table on the supplied tab.
+
+        Column 0: read-only key
+        Column 1: editable value
+
+        Returns the QTableWidget.
+        """
+
+        layout = QVBoxLayout()
+
+        self.lib_table = QTableWidget()
+        self.lib_table.setColumnCount(2)
+        self.lib_table.setHorizontalHeaderLabels(["Library", "Actual Location"])
+
+        self.lib_table.horizontalHeader().setStretchLastSection(True)
+
+        layout.addWidget(self.lib_table)
+
+        return layout
+    
+    def table_to_dict(self):
+        """
+        Convert the table contents into:
+
+            {
+                left_column: right_column,
+                ...
+            }
+        """
+
+        result = {}
+
+        for row in range(self.lib_table.rowCount()):
+
+            key_item = self.lib_table.item(row, 0)
+            value_item = self.lib_table.item(row, 1)
+
+            if key_item is None:
+                continue
+
+            key = key_item.text()
+
+            value = (
+                value_item.text()
+                if value_item is not None
+                else ""
+            )
+
+            result[key] = value
+
+        return result
 
     def populateTestPanel(self, widget):
         '''Create QtWidgets and populate them for the config settings panel.'''

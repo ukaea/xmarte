@@ -92,7 +92,9 @@ class TestWindow(ModalOptionsWindow): # pylint: disable=R0904
                 self.importDef(self.application.test_definition)
             else:
                 self.editor.scene.clear()
-                self.sim_generator = SimulationGenerator(self.marte_app_def)
+                self.sim_generator = SimulationGenerator(self.marte_app_def, cwd = os.path.join(self.application.settings['RemotePanel']['temp_folder'],
+                                                "temp"))
+                self.tab_wgt.populate_keys(self.sim_generator.simulation_app.libraries)
                 self.sim_generator.configure(self.marte_app_def)
                 mcycles = self.tab_wgt.mcycles_edt.text()
                 self.sim_generator.simulation_app.config['maxcycles'] = mcycles
@@ -229,7 +231,9 @@ class TestWindow(ModalOptionsWindow): # pylint: disable=R0904
             self, "Save Test Configuration", default_dir, "MARTe2cfg (*.cfg);;"
         )
         if filename:
-            self.sim_generator = SimulationGenerator(self.marte_app_def)
+            self.sim_generator = SimulationGenerator(self.marte_app_def, cwd = os.path.join(self.application.settings['RemotePanel']['temp_folder'],
+                                                "temp"))
+            self.tab_wgt.populate_keys(self.sim_generator.simulation_app.libraries)
             self.sim_generator.configure(self.marte_app_def)
             mcycles = self.tab_wgt.mcycles_edt.text()
             self.sim_generator.simulation_app.config['maxcycles'] = mcycles
@@ -248,7 +252,9 @@ class TestWindow(ModalOptionsWindow): # pylint: disable=R0904
 
     def runSimulation(self):
         ''' Run the simulation defined '''
-        self.sim_generator = SimulationGenerator(self.marte_app_def)
+        self.sim_generator = SimulationGenerator(self.marte_app_def, cwd = os.path.join(self.application.settings['RemotePanel']['temp_folder'],
+                                                "temp"))
+        self.tab_wgt.populate_keys(self.sim_generator.simulation_app.libraries)
         self.sim_generator.configure(self.marte_app_def)
         self.sim_generator.simulation_app.config['maxcycles'] = self.tab_wgt.mcycles_edt.text()
         self.sim_generator.simulation_app.config['timefrequency'] = self.tab_wgt.rate_edt.text()
@@ -304,7 +310,9 @@ class TestWindow(ModalOptionsWindow): # pylint: disable=R0904
         ''' Undo all user changes and reset to the auto generated simulation '''
         QGuiApplication.setOverrideCursor(Qt.WaitCursor)
         self.editor.scene.clear()
-        self.sim_generator = SimulationGenerator(self.marte_app_def)
+        self.sim_generator = SimulationGenerator(self.marte_app_def, cwd = os.path.join(self.application.settings['RemotePanel']['temp_folder'],
+                                                "temp"))
+        self.tab_wgt.populate_keys(self.sim_generator.simulation_app.libraries)
         self.sim_generator.configure(self.marte_app_def)
         self.sim_generator.simulation_app.config['maxcycles'] = self.tab_wgt.mcycles_edt.text()
         self.sim_generator.simulation_app.config['timefrequency'] = self.tab_wgt.rate_edt.text()
@@ -321,7 +329,9 @@ class TestWindow(ModalOptionsWindow): # pylint: disable=R0904
         state_name, thread_name = self.resolveThread()
         scene = self.state_scenes[state_name][thread_name]
         scene.clear()
-        self.sim_generator = SimulationGenerator(self.marte_app_def)
+        self.sim_generator = SimulationGenerator(self.marte_app_def, cwd = os.path.join(self.application.settings['RemotePanel']['temp_folder'],
+                                                "temp"))
+        self.tab_wgt.populate_keys(self.sim_generator.simulation_app.libraries)
         self.sim_generator.configure(self.marte_app_def)
         self.sim_generator.simulation_app.config['maxcycles'] = self.tab_wgt.mcycles_edt.text()
         self.sim_generator.simulation_app.config['timefrequency'] = self.tab_wgt.rate_edt.text()

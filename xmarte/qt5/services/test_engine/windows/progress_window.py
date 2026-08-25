@@ -70,7 +70,8 @@ class TestProgressWindow(QMainWindow):
         self.worker = RunThread(self.settings,
                                 self.files,
                                 self.application.API.getServiceByName('TypeDefinitionService'),
-                                self.application.API.getServiceByName('Compiler'))
+                                self.application.API.getServiceByName('Compiler'),
+                                self.test_window)
 
     def startThread(self):
         ''' Start our test thread '''

@@ -23,7 +23,7 @@ class RunThread(QObject):
     text_update = pyqtSignal(str)
     test_error = pyqtSignal(str)
 
-    def __init__(self, settings, files, type_service, compile_service):
+    def __init__(self, settings, files, type_service, compile_service, test_window):
         super().__init__()
         # The scene should be read-from only - never changed
         self.files = files
@@ -34,6 +34,7 @@ class RunThread(QObject):
         self.compile_service = compile_service
         self._is_interrupted = False
         self.packet_libraries = []
+        self.test_window = test_window
 
         self.session = hash(
             uuid.uuid1()
@@ -106,6 +107,15 @@ class RunThread(QObject):
         if os.path.exists(self.compile_settings['temp_folder']):
             shutil.rmtree(self.compile_settings['temp_folder'])
         shutil.copytree(self.type_service.output_path, self.compile_settings['temp_folder'])
+        for library in self.sim_app_def.libraries:
+            # Do something about this
+            keymap = self.test_window.tab_wgt.table_to_dict()
+            library_name = os.path.basename(library)
+            if keymap[library_name] == "":
+                msg = f"Library path not given in library tab for this library: {library_name}"
+                raise AbortException(msg)
+            shutil.copy(library, os.path.join(self.remote_settings['temp_folder'],
+                                                "temp", f'{lib_name}.so'))
         for types in self.sim_app_def.types_used:
             if types not in paths:
                 msg = "Unknown type detected, please add this type to the type database first."
