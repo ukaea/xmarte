@@ -35,13 +35,13 @@ from xmarte.qt5.libraries.functions import fixSocketOrdering, updateDefaultDialo
 from xmarte.qt5.services.api_manager.widgets.error_widget import ErrorWidgetButton
 from xmarte.qt5.widgets.node_editor_viewer import NodeEditorWidgetViewer
 from xmarte.qt5.widgets.scene import EditorScene
-from xmarte.qt5.windows.base_window import ModalOptionsWindow
+from xmarte.qt5.windows.base_window import PopUpWindow
 
 from ..widgets.test_tab_panel import TestPanelWidget
 from .progress_window import TestProgressWindow
 
 
-class TestWindow(ModalOptionsWindow): # pylint: disable=R0904
+class TestWindow(PopUpWindow): # pylint: disable=R0904
     '''
     The Test Execution Window
     '''
