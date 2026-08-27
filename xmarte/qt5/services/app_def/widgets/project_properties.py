@@ -112,6 +112,8 @@ class ProjectPropertiesWidget(QWidget):
         self.sched_combo.setCurrentText(configuration['misc']['scheduler'])
         self.http_use.setChecked(configuration['http']['use_http'])
         self.http_folder.loc.setText(configuration['http']['http_folder'])
-        self.http_root.setText(configuration['http']['webroot'])
-        self.http_service.setText(configuration['http']['webservice'])
+        if 'webroot' in list(configuration['http'].keys()):
+            self.http_root.setText(configuration['http']['webroot'])
+        if 'webservice' in list(configuration['http'].keys()):
+            self.http_service.setText(configuration['http']['webservice'])
         
