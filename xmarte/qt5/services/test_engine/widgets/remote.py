@@ -117,4 +117,3 @@ options.html#general-menu"""
                 "ftp_username": encryptPassword('admin'),
                 "ftp_password": encryptPassword('admin'),
                 }
-    

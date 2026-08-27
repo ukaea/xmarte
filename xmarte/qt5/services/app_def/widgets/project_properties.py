@@ -64,7 +64,7 @@ class ProjectPropertiesWidget(QWidget):
 
         vh_layout.addWidget(http_use_lbl)
         vh_layout.addWidget(self.http_use)
-        
+
         http_root_lbl = QLabel("WebRoot:")
         self.http_root = QLineEdit("WebRoot")
         http_service_lbl = QLabel("WebService:")
@@ -114,4 +114,3 @@ class ProjectPropertiesWidget(QWidget):
         self.http_folder.loc.setText(configuration['http']['http_folder'])
         self.http_root.setText(configuration['http']['webroot'])
         self.http_service.setText(configuration['http']['webservice'])
-        

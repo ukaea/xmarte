@@ -112,4 +112,3 @@ class ApplicationDefinition(Service):
             configuration['misc']['gamsources'] = ['DDB0']
         self.configuration = configuration
         self.project_prop_panel.loadConfiguration(self.configuration)
-        

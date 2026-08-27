@@ -48,7 +48,7 @@ class TestPanelWidget(QWidget):
         self.populateTestPanel(self.test_panel)
         self.tab_wgt.addTab(self.test_panel, "Test Properties")
         self.library_panel = QWidget()
-        self.library_panel.setLayout(self.create_key_value_table())
+        self.library_panel.setLayout(self.createKeyValueTable())
         self.tab_wgt.addTab(self.library_panel, "Libraries")
 
         spacer = QWidget(self)
@@ -60,7 +60,7 @@ class TestPanelWidget(QWidget):
 
         self.loadNodes()
 
-    def choose_file_for_cell(self, row, column):
+    def chooseFileForCell(self, row, column):
         """
         Open a file dialogue when the user double-cliks a cell in the
         'actual location' column.
@@ -78,7 +78,7 @@ class TestPanelWidget(QWidget):
         if file_path:
             self.lib_table.item(row, column).setText(file_path)
 
-    def populate_keys(self, keys):
+    def populateKeys(self, keys):
         """
         Populate the table with keys in the left-hand column.
         The key cells are read-only.
@@ -100,7 +100,7 @@ class TestPanelWidget(QWidget):
             value_item = QTableWidgetItem("")
             self.lib_table.setItem(row, 1, value_item)
 
-    def create_key_value_table(self):
+    def createKeyValueTable(self):
         """
         Creates a 2-column table on the supplied tab.
 
@@ -116,13 +116,13 @@ class TestPanelWidget(QWidget):
         self.lib_table.setColumnCount(2)
         self.lib_table.setHorizontalHeaderLabels(["Library", "Actual Location"])
         self.lib_table.horizontalHeader().setStretchLastSection(True)
-        self.lib_table.cellClicked.connect(self.choose_file_for_cell)
+        self.lib_table.cellClicked.connect(self.chooseFileForCell)
 
         layout.addWidget(self.lib_table)
 
         return layout
-    
-    def table_to_dict(self):
+
+    def tableToDict(self):
         """
         Convert the table contents into:
 
@@ -154,7 +154,7 @@ class TestPanelWidget(QWidget):
 
         return result
 
-    def apply_dict_to_table(self, key_map):
+    def applyDictToTable(self, key_map):
         """
         Apply a saved dictionary to the table.
 
@@ -187,8 +187,8 @@ class TestPanelWidget(QWidget):
                     self.lib_table.setItem(row, 1, value_item)
 
                 value_item.setText(str(value))
-                
-    def add_missing_libraries(self, library_names):
+
+    def addMissingLibraries(self, library_names):
         """
         Append library names which are not already present
         in the first column of the table.
