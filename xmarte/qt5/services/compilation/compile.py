@@ -26,6 +26,17 @@ class Compiler(Service):
         self.compile_settings = self.application.settings['CompilationPanel']
         # Define the command to be run
         command = ["make", "-f", "Makefile.x86-linux", "clean"]
+
+        # Compiler flags required for MARTe2 compilation
+        compile_flags = (
+            "-fPIC -Wall -std=c++98 -Werror "
+            "-Wno-invalid-offsetof "
+            "-Wno-unused-variable "
+            "-fno-strict-aliasing "
+            "-Wno-uninitialized "
+            "-Wno-error=overloaded-virtual"
+        )
+
         directory = str(os.path.abspath(directory))
         # Ensure the directory exists
         if not os.path.isdir(directory):
@@ -55,7 +66,7 @@ class Compiler(Service):
                 if process.returncode != 0:
                     raise subprocess.CalledProcessError(process.returncode, command)
 
-            command = ["make", "-f", "Makefile.x86-linux"]
+            command = ["make", "-f", "Makefile.x86-linux", f"CFLAGS={compile_flags}"]
 
             if os.name == "nt":
                 newcommand = f"wsl docker run -v {volume} -w /root/tests {image}".split()

@@ -108,7 +108,8 @@ class ApplicationDefinition(Service):
 
     def loadConfig(self, configuration):
         ''' Load a given configuration setup '''
-        if not configuration['misc']['gamsources']:
-            configuration['misc']['gamsources'] = ['DDB0']
+        configuration['misc'].setdefault('gamsources', 'DDB0')
+        configuration['http'].setdefault('webroot', 'WebRoot')
+        configuration['http'].setdefault('webservice', 'WebService')
         self.configuration = configuration
         self.project_prop_panel.loadConfiguration(self.configuration)

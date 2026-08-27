@@ -192,7 +192,7 @@ def test_run_thread(mainwindow, qtbot):
     files = []
     
     # Test exception handling
-    thread = RunThread(settings, files, mainwindow.API.getServiceByName('TypeDefinitionService'),mainwindow.API.getServiceByName('Compiler'))
+    thread = RunThread(settings, files, mainwindow.API.getServiceByName('TypeDefinitionService'),mainwindow.API.getServiceByName('Compiler'), test_window)
     e = ''
     with pytest.raises(AbortException, match=f"Could not generate configuration file because of error {str(e)}"):
         thread.generateConfig()

@@ -6,7 +6,10 @@ ENV PYTHONUNBUFFERED=1
 RUN apt-get update && apt-get install -y --no-install-recommends \
     mkdocs \
     libgl1 \
+    libglib2.0-0 \
     libxcb-xinerama0 \
+    fontconfig \
+    libfreetype6 \
     binutils \
     gnupg \
     build-essential \
