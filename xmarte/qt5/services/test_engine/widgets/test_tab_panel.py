@@ -153,6 +153,77 @@ class TestPanelWidget(QWidget):
 
         return result
 
+    def apply_dict_to_table(self, key_map):
+        """
+        Apply a saved dictionary to the table.
+
+        Existing rows are updated where their left-column key
+        exists in key_map.
+
+        Example:
+            {
+                "libA": "/path/to/libA.so",
+                "libB": "/path/to/libB.so",
+            }
+        """
+
+        for row in range(self.lib_table.rowCount()):
+
+            key_item = self.lib_table.item(row, 0)
+
+            if key_item is None:
+                continue
+
+            key = key_item.text()
+
+            if key in key_map:
+                value = key_map[key]
+
+                value_item = self.lib_table.item(row, 1)
+
+                if value_item is None:
+                    value_item = QTableWidgetItem()
+                    self.lib_table.setItem(row, 1, value_item)
+
+                value_item.setText(str(value))
+                
+    def add_missing_libraries(self, library_names):
+        """
+        Append library names which are not already present
+        in the first column of the table.
+
+        New rows get an empty editable value in column 2.
+        """
+
+        existing_keys = set()
+
+        for row in range(self.lib_table.rowCount()):
+            item = self.lib_table.item(row, 0)
+
+            if item is not None:
+                existing_keys.add(item.text())
+
+        for library_name in library_names:
+
+            if library_name in existing_keys:
+                continue
+
+            row = self.lib_table.rowCount()
+            self.lib_table.insertRow(row)
+
+            key_item = QTableWidgetItem(library_name)
+            value_item = QTableWidgetItem("")
+
+            # Left column cannot be edited
+            key_item.setFlags(
+                key_item.flags() & ~Qt.ItemIsEditable
+            )
+
+            self.lib_table.setItem(row, 0, key_item)
+            self.lib_table.setItem(row, 1, value_item)
+
+            existing_keys.add(library_name)
+
     def populateTestPanel(self, widget):
         '''Create QtWidgets and populate them for the config settings panel.'''
         panel_layout = QVBoxLayout()

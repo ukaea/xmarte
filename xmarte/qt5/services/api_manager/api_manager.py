@@ -628,10 +628,10 @@ Would you like to review these errors?""",
 
             Objectlist = [ObjectBrowser,ResourcesHtml,MessageInterface]
 
-            HTTPBrowser = MARTe2HTTPObjectBrowser('+WebRoot','.',Objectlist)
+            HTTPBrowser = MARTe2HTTPObjectBrowser('+' + config['http']['webroot'].lstrip('+'),'.',Objectlist)
 
             # Add WebServer
-            service = MARTe2HttpService('+WebService')
+            service = MARTe2HttpService('+' + config['http']['webservice'].lstrip('+'))
             # Add this to application
             app.add(externals=[HTTPBrowser] + [service])
             if statemachine:
@@ -640,7 +640,7 @@ Would you like to review these errors?""",
                 first_state = statemachine.states[0]
                 find_start = next(a for a in first_state.objects if getname(a).upper() == 'START')
                 if not any(a for a in find_start.messages if
-                           a.destination.strip('"') == 'WebServer' and
+                           a.destination.strip('"') == config['http']['webservice'].lstrip('+') and
                            a.function.strip('"') == 'Start'):
                     # We need to start our web server at startup
                     find_start.messages.insert(0, MARTe2Message("StartHttpServer",

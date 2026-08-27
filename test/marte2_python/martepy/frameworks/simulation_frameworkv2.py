@@ -22,7 +22,7 @@ Req:
 import copy, os
 
 from martepy.functions.extra_functions import getname # pylint: disable=W0614
-from martepy.functions.gam_functions import (getAlias,
+from martepy.functions.gam_functions import (assignUniqueName, getAlias,
                                              isMatchingSignal,
                                              findSignalInFunctionList,
                                              getKeyAttribute,
@@ -282,8 +282,17 @@ class SimulationGenerator():
                             if datasource in ninternal_datasources:
                                 # This feeds to the outside world - we don't want to do this,
                                 # we should place it into our misc DDB
-                                qsignal = function.output_signals[o_i]
-                                qsignal[1]['MARTeConfig']['DataSource'] = self.misc_ddb
+                                matching_signals = [
+                                    signal
+                                    for thread in state.threads.objects
+                                    for obj in thread.functions
+                                    for signal in obj.output_signals
+                                    if signal[1].get('MARTeConfig', {}).get('DataSource')
+                                        == self.misc_ddb.lstrip('+')
+                                ]
+                                qsignal = assignUniqueName(function.output_signals[o_i], matching_signals)
+                                qsignal[1]['MARTeConfig']['Alias'] = qsignal[0]
+                                qsignal[1]['MARTeConfig']['DataSource'] = self.misc_ddb.lstrip('+')
 
                 if added:
                     # If we needed to replace signals, now we can add our constant GAM as it
@@ -373,7 +382,7 @@ class SimulationGenerator():
         SimulinkWrapperGAMs = [obj for obj in self.simulation_app.functions if getattr(obj, "class_name", None) == "SimulinkWrapperGAM" ]
         self.simulation_app.libraries = copy.deepcopy([obj.library for obj in SimulinkWrapperGAMs])
         for simwrapper in SimulinkWrapperGAMs:
-            simwrapper.library = os.path.join(self.cwd, os.path.basename(simwrapper.library))# TODO: set for tempfolder and .so name
+            simwrapper.library = os.path.join(self.cwd, os.path.basename(simwrapper.library)).replace('\\','/').replace('\\\\','/') # TODO: set for tempfolder and .so name
         # Now we want to insert the internals of types we don't have in the application
         # Need to insert these into the objects part of the application so they appear
         # at the very start

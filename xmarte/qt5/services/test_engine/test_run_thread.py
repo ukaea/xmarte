@@ -114,8 +114,8 @@ class RunThread(QObject):
             if keymap[library_name] == "":
                 msg = f"Library path not given in library tab for this library: {library_name}"
                 raise AbortException(msg)
-            shutil.copy(library, os.path.join(self.remote_settings['temp_folder'],
-                                                "temp", f'{lib_name}.so'))
+            shutil.copy(keymap[library_name], os.path.join(self.remote_settings['temp_folder'],
+                                                "temp", f'{library_name}.so'))
         for types in self.sim_app_def.types_used:
             if types not in paths:
                 msg = "Unknown type detected, please add this type to the type database first."
@@ -138,7 +138,7 @@ check your settings, connection and the runner on the server."""
                                         'x86-linux', 'Packets', lib_name, f'{lib_name}.so')
                 self.packet_libraries.append(lib_path)
                 shutil.copy(lib_path, os.path.join(self.remote_settings['temp_folder'],
-                                                   "temp", f'{lib_name}.so'))
+                                                   "temp", lib_name))
 
     def updateProgress(self, text, progress_int):
         ''' Signal to update the progress window '''

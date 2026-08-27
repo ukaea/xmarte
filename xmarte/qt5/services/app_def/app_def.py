@@ -51,6 +51,13 @@ class ApplicationDefinition(Service):
         self.project_prop_panel.http_folder.loc.textChanged.connect(partial(self.updateConfig,
                                                                             ['http',
                                                                              'http_folder']))
+        self.project_prop_panel.http_root.textChanged.connect(partial(self.updateConfig,
+                                                                            ['http',
+                                                                             'webroot']))
+        self.project_prop_panel.http_service.textChanged.connect(partial(self.updateConfig,
+                                                                            ['http',
+                                                                             'webservice']))
+
 
     def updateConfig(self, keys, value):
         ''' Replace the configuration '''
@@ -91,7 +98,9 @@ class ApplicationDefinition(Service):
         gamsources = [copy.copy(self.application.settings['DefaultPanel']['GAMDataSource'])]
         scheduler = copy.copy(self.application.settings['DefaultPanel']['Scheduler'])
         self.configuration = {'http': {'use_http' : use_http,
-                                       'http_folder': http_folder}}
+                                       'http_folder': http_folder,
+                                       'webroot' : 'WebRoot',
+                                       'webservice': 'WebService'}}
         self.configuration['misc'] = {'timingsource':timingsource,
                                       'gamsources':gamsources,
                                       'scheduler':scheduler,}

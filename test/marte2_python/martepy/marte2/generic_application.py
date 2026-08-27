@@ -463,11 +463,11 @@ signal/alias: {string} in datasource {datasource_name}"""))
 
                     setDatasource(out_signal, 'LogGAMSource')
 
-                    assignUniqueName(new_signal, self.logging_iogam.input_signals)
+                    new_signal = assignUniqueName(new_signal, self.logging_iogam.input_signals)
 
                     self.logging_iogam.input_signals += [new_signal]
 
-                    assignUniqueName(out_signal, self.logging_iogam.output_signals)
+                    out_signal = assignUniqueName(out_signal, self.logging_iogam.output_signals)
 
                     removeKeysFromConfig(out_signal, ['Alias'])
 
@@ -533,7 +533,7 @@ signal/alias: {string} in datasource {datasource_name}"""))
             # Now we know what the signal will be on the primary thread of the async bridge
             # Now create the logging of this signal in the primary thread
             tolog = copy.deepcopy(out_signal)
-            assignUniqueName(tolog, self.loggingintoio.input_signals)
+            tolog = assignUniqueName(tolog, self.loggingintoio.input_signals)
             setDatasource(tolog, 'LogGAMSource')
             consolidate(state.threads.objects[0].functions,
                         'IOGAM','+async_sim_io',
@@ -788,3 +788,12 @@ def getApplication():
 
                 # Remove the bridge as it is unused
                 self.additional_datasources.remove(bridge)
+                
+        currentstates = []
+        for index, state in enumerate(self.states):
+            #Ensure unique states only
+            check = [a for a in currentstates if state.configuration_name == a.configuration_name]
+            if check:
+                self.states.pop(index)
+                continue
+            currentstates += [copy.deepcopy(state)]

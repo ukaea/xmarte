@@ -1,6 +1,7 @@
 '''
 The base definition of the scene for several standard overrides like node classifier
 '''
+from ast import Try
 import uuid
 import json
 from collections import OrderedDict
@@ -137,7 +138,10 @@ class BaseScene(XMARTeScene):
         comments_by_id = {}
 
         if restore_id:
-            self.id = data["id"]
+            try:
+                self.id = data["id"]
+            except:
+                pass
 
         self.version_uuid = data["version_uuid"]
         # -- deserialize NODES
