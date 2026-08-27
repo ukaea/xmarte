@@ -10,6 +10,7 @@ from PyQt5.QtWidgets import (
 )
 from qtpy.QtCore import Qt
 
+
 class BaseWindow(QMainWindow):
     '''
     Not really used much - a predecessor to pytests, probably needs an overhaul
@@ -18,12 +19,10 @@ class BaseWindow(QMainWindow):
         self.save_button = None
         self.application = application
         self.cancel_button = None
-        if hasattr(application, "test"):
-            if application.test:
-                super().__init__()
-                application.newwindow = self
-            else:
-                super().__init__(application)
+
+        if getattr(application, "test", False):
+            super().__init__()
+            application.newwindow = self
         else:
             super().__init__(application)
 
@@ -69,6 +68,7 @@ class BaseWindow(QMainWindow):
         )
         self.setCentralWidget(QWidget(self))
 
+
 class ModalOptionsWindow(BaseWindow):
     '''
     Setup a modal window type
@@ -80,3 +80,13 @@ class ModalOptionsWindow(BaseWindow):
 
         # Set Window Size
         self.setSize(x_pos,y_pos,width,height)
+
+
+class PopUpWindow(BaseWindow):
+    '''
+    Setup a partially modal window type.
+    '''
+    def __init__(self, application, app, x_pos=0.4, y_pos=0.3, width=0.3, height=0.2):
+        super().__init__(application)
+        self.app = app
+        self.setSize(x_pos, y_pos, width, height)

@@ -20,6 +20,7 @@ from PyQt5.QtWidgets import (
     QFileDialog,
 )
 
+from martepy.marte2.gams.simulink_gam import SimulinkGAM
 from martepy.marte2.gams.constant_gam import ConstantGAM
 from martepy.marte2.datasources import FileReader
 from martepy.marte2.gams.iogam import IOGAM
@@ -269,7 +270,7 @@ class TestPanelWidget(QWidget):
         posbl_inputs.gbox = QGridLayout()
         posbl_inputs.setLayout(posbl_inputs.gbox)
 
-        blocks = [ConstantGAM, FileReader, IOGAM]
+        blocks = [ConstantGAM, FileReader, IOGAM, SimulinkGAM]
         for block in list(blocks):
             block_action = QPushButton(block.__name__)
             block_action.clicked.connect(partial(self.addBlock, block))
