@@ -109,7 +109,7 @@ class RunThread(QObject):
         shutil.copytree(self.type_service.output_path, self.compile_settings['temp_folder'])
         for library in self.sim_app_def.libraries:
             # Do something about this
-            keymap = self.test_window.tab_wgt.table_to_dict()
+            keymap = self.test_window.tab_wgt.tableToDict()
             library_name = os.path.basename(library)
             if keymap[library_name] == "":
                 msg = f"Library path not given in library tab for this library: {library_name}"

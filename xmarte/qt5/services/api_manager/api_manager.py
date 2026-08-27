@@ -628,7 +628,9 @@ Would you like to review these errors?""",
 
             Objectlist = [ObjectBrowser,ResourcesHtml,MessageInterface]
 
-            HTTPBrowser = MARTe2HTTPObjectBrowser('+' + config['http']['webroot'].lstrip('+'),'.',Objectlist)
+            HTTPBrowser = MARTe2HTTPObjectBrowser(
+                '+' + config['http']['webroot'].lstrip('+'), '.', Objectlist
+            )
 
             # Add WebServer
             service = MARTe2HttpService('+' + config['http']['webservice'].lstrip('+'))
