@@ -19,7 +19,7 @@ def test_new(mainwindow, qtbot, monkeypatch) -> None:
     assert getStateThreads(mainwindow.API.getServiceByName('StateDefinitionService').thread_wdgt) == {'State1': ['Thread1'], 'Error': ['Thread1']}
     
     assert getSplitText(mainwindow) == 'No node blocks exist in the editor'
-    assert mainwindow.API.getServiceByName('ApplicationDefinition').configuration == {'http': {'use_http': False, 'http_folder': ''}, 'misc': {'timingsource': 'TimingsDataSource', 'gamsources': ['DDB0'], 'scheduler': 'GAMScheduler'}, 'app_name': 'App'}
+    assert mainwindow.API.getServiceByName('ApplicationDefinition').configuration == {'http': {'use_http': False, 'http_folder': '', 'webroot' : 'WebRoot', 'webservice': 'WebService'}, 'misc': {'timingsource': 'TimingsDataSource', 'gamsources': ['DDB0'], 'scheduler': 'GAMScheduler'}, 'app_name': 'App'}
     assert mainwindow.API.getServiceByName('ApplicationDefinition').http_messages == []
     assert mainwindow.leftpanel.tab_wgt.widget(1).app_edt.text() == 'App'
 

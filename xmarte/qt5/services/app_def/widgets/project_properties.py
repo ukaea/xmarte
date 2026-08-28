@@ -64,6 +64,15 @@ class ProjectPropertiesWidget(QWidget):
 
         vh_layout.addWidget(http_use_lbl)
         vh_layout.addWidget(self.http_use)
+
+        http_root_lbl = QLabel("WebRoot:")
+        self.http_root = QLineEdit("WebRoot")
+        http_service_lbl = QLabel("WebService:")
+        self.http_service = QLineEdit("WebService")
+        vh_layout.addWidget(http_root_lbl)
+        vh_layout.addWidget(self.http_root)
+        vh_layout.addWidget(http_service_lbl)
+        vh_layout.addWidget(self.http_service)
         vh_layout.addWidget(self.http_folder)
 
         self.config_msg = QPushButton("Configure Messages...")
@@ -103,4 +112,7 @@ class ProjectPropertiesWidget(QWidget):
         self.sched_combo.setCurrentText(configuration['misc']['scheduler'])
         self.http_use.setChecked(configuration['http']['use_http'])
         self.http_folder.loc.setText(configuration['http']['http_folder'])
-        
+        if 'webroot' in list(configuration['http'].keys()):
+            self.http_root.setText(configuration['http']['webroot'])
+        if 'webservice' in list(configuration['http'].keys()):
+            self.http_service.setText(configuration['http']['webservice'])

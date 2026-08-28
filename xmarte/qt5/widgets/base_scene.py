@@ -137,7 +137,10 @@ class BaseScene(XMARTeScene):
         comments_by_id = {}
 
         if restore_id:
-            self.id = data["id"]
+            try:
+                self.id = data["id"]
+            except: # pylint: disable=W0702
+                pass
 
         self.version_uuid = data["version_uuid"]
         # -- deserialize NODES

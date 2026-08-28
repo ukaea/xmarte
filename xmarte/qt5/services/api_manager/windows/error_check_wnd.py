@@ -61,4 +61,3 @@ class AppErrorWindow(QMainWindow):
         self.listbox.clear()
         for exception in exceptions:
             self.listbox.addItem(str(exception))
-        

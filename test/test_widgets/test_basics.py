@@ -58,7 +58,7 @@ def test_editor(mainwindow):
             mainwindow.editor.fileLoad('')
 
 def test_interrupt():
-    thrd = RunThread({'RemotePanel':{},'CompilationPanel':{}},[],None,None)
+    thrd = RunThread({'RemotePanel':{},'CompilationPanel':{}},[],None,None,None)
     thrd.interrupt()
     
 def test_view_node(mainwindow):

@@ -48,7 +48,7 @@ class MARTe2ConfigFormat(FileHandlerPlugin):
         '''
         Read the application and load it
         '''
-        app, state_machine, http_browser, http_messages, interfaces = readApplication(fname)
+        app, state_machine, http_browser, http_messages, interfaces, http_service = readApplication(fname)
         state_service = self.application.API.getServiceByName("StateDefinitionService")
         app_def = self.application.API.getServiceByName("ApplicationDefinition")
         interface_serv = self.application.API.getServiceByName("Interfaces")
@@ -66,6 +66,8 @@ class MARTe2ConfigFormat(FileHandlerPlugin):
         if http_browser:
             app_def.configuration['http']['use_http'] = True
             app_def.http_messages = http_messages
+            app_def.configuration['http']['webroot'] = http_browser.configuration_name.lstrip('+')
+            app_def.configuration['http']['webservice'] = http_service.configuration_name.lstrip('+')
             object_browser = next((a for a in http_browser.objects if a.__class__ == MARTe2HttpDirectoryResource), None)
             if object_browser:
                 app_def.configuration['http']['http_folder'] = object_browser.basedir.replace('"','')
