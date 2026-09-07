@@ -80,15 +80,17 @@ RUN mkdir /casadi
 
 WORKDIR /casadi
 
-COPY ./test/docker/casadi-3.8.0-linux64-matlab2018b.zip casadi-3.8.0-linux64-matlab2018b.zip
+COPY ./test/docker/casadi-3.7.2-linux64-matlab2018b.zip casadi-3.7.2-linux64-matlab2018b.zip
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends unzip \
+    && unzip /casadi/casadi-3.7.2-linux64-matlab2018b.zip \
+    && cp -a /casadi/casadi-3.7.2-linux64-matlab2018b/. /casadi/ \
+    && rm -rf /casadi/casadi-3.7.2-linux64-matlab2018b \
+    && rm /casadi/casadi-3.7.2-linux64-matlab2018b.zip \
     && rm -rf /var/lib/apt/lists/*
 
-RUN unzip casadi-3.8.0-linux64-matlab2018b.zip
-
-ENV LD_LIBRARY_PATH=/casadi:$LD_LIBRARY_PATH
+ENV LD_LIBRARY_PATH=/casadi:${LD_LIBRARY_PATH}
 
 WORKDIR /root/Projects
 

@@ -107,20 +107,26 @@ class RunThread(QObject):
         if os.path.exists(self.compile_settings['temp_folder']):
             shutil.rmtree(self.compile_settings['temp_folder'])
         shutil.copytree(self.type_service.output_path, self.compile_settings['temp_folder'])
-        for library in self.sim_app_def.libraries:
+        for library in self.libraries:
+            if not os.path.exists(
+                temp_dir := os.path.join(self.remote_settings['temp_folder'], "temp")
+            ):
+                os.mkdir(temp_dir)
             # Do something about this
-            keymap = self.test_window.tab_wgt.tableToDict()
             library_name = os.path.basename(library)
-            if keymap[library_name] == "":
+            if self.keymap.get(library_name, None) == "":
                 msg = f"Library path not given in library tab for this library: {library_name}"
                 raise AbortException(msg)
-            shutil.copy(keymap[library_name], os.path.join(self.remote_settings['temp_folder'],
-                                                "temp", f'{library_name}.so'))
-        for types in self.sim_app_def.types_used:
+            if self.keymap.get(library_name, None) is None:
+                # this is a hidden file to copy
+                shutil.copy(library, os.path.join(temp_dir, f'{library_name}'))
+                continue
+            shutil.copy(self.keymap[library_name], os.path.join(temp_dir, f'{library_name}'))
+        for types in self.types_used:
             if types not in paths:
                 msg = "Unknown type detected, please add this type to the type database first."
                 raise AbortException(msg)
-        if len(self.sim_app_def.types_used) > 0:
+        if len(self.types_used) > 0:
             if self.compile_settings["use_remote"]:
                 # Send to server to be compiled
                 try:
@@ -159,7 +165,7 @@ check your settings, connection and the runner on the server."""
 
             # Assume done, now write to file
             # Okay open modal window and communicate with it to show stuff.
-            config = self.sim_app_def.writeToConfig()
+            config = self.writeToConfig()
             temp_directory = os.path.join(self.remote_settings['temp_folder'], "temp")
             if not os.path.exists(temp_directory):
                 os.mkdir(temp_directory)

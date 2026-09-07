@@ -355,7 +355,26 @@ class TestWindow(PopUpWindow): # pylint: disable=R0904
                                  getname(datasource) == getname(as_gam)), None)
                 # Doesn't already exist in our definition
                 if not existing:
+                    if hasattr(as_gam, "filename"):
+                        filename = as_gam.filename
+                        as_gam.filename = os.path.join(self.cwd, os.path.basename(as_gam.filename))
+                        self.sim_app_def.libraries.append(
+                            filename
+                        )
                     app_def.additional_datasources.append(as_gam)
+                else:
+                    as_gam_params = as_gam.serialize()['parameters']
+                    as_gam_params.pop('input', None)
+                    existing_params = existing.serialize()['parameters']
+                    existing_params.pop('input', None)
+                    if as_gam_params != existing_params:  # user has changed parameters in GUI
+                        as_gam.input_signals = []
+                        as_gam.input = False
+                        app_def.additional_datasources = [  # remove old datasource
+                            ds for ds in app_def.additional_datasources
+                            if ds.configuration_name != as_gam.configuration_name
+                        ]
+                        app_def.additional_datasources.append(as_gam)  # add new with update params
             else:
                 # Is a GAM
                 thread.functions.append(as_gam)

@@ -1,6 +1,5 @@
 ''' Runs the test thread which executes the test and shows the progress to the user '''
 import os
-import copy
 
 from PyQt5.QtWidgets import (QVBoxLayout,
                              QWidget,
@@ -89,9 +88,16 @@ class TestProgressWindow(QMainWindow):
         self.worker.label_update.connect(self.progressLabelCallback)
         self.worker.text_update.connect(self.progressTextCallback)
         # Create a QThread and move the worker object to its thread
+        library_keymap = self.test_window.tab_wgt.tableToDict()
+        libraries = self.sim_app_def.libraries
+        types_used = self.sim_app_def.types_used
+        write_to_config = self.sim_app_def.writeToConfig
         self.thread = QThread()
         self.worker.moveToThread(self.thread)
-        self.worker.sim_app_def = copy.deepcopy(self.test_window.sim_app_def)
+        self.worker.keymap = library_keymap
+        self.worker.libraries = libraries
+        self.worker.types_used = types_used
+        self.worker.writeToConfig = write_to_config
         # Connect thread's started signal to worker's run method
         self.thread.started.connect(self.worker.run)
 
