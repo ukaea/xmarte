@@ -196,8 +196,11 @@ def test_run_thread(mainwindow, qtbot):
     e = ''
     with pytest.raises(AbortException, match=f"Could not generate configuration file because of error {str(e)}"):
         thread.generateConfig()
-        
-    thread.sim_app_def = test_window.sim_app_def
+
+    thread.keymap = test_window.tab_wgt.tableToDict()
+    thread.libraries = test_window.sim_app_def.libraries
+    thread.types_used = test_window.sim_app_def.types_used
+    thread.writeToConfig = test_window.sim_app_def.writeToConfig
     temp_dir = os.path.join(mainwindow.settings['RemotePanel']['temp_folder'], "temp")
     if os.path.exists(temp_dir):
         shutil.rmtree(temp_dir)
